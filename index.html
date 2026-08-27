@@ -1,0 +1,488 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>SDR Ops — SLA Diário & Análise</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap">
+<style>
+:root{
+  --bg:#F0F2F5;--surface:#FFF;--surface2:#F7F8FA;--border:#E2E6EC;
+  --text:#0A1628;--text-2:#4A5568;--text-3:#8A97A8;
+  --header:#0D1B2A;--header-text:#E8EEF4;--accent:#0A7EA4;
+  --green:#059669;--green-bg:#ECFDF5;--green-bd:#A7F3D0;
+  --amber:#B45309;--amber-bg:#FFFBEB;--amber-bd:#FDE68A;
+  --red:#DC2626;--red-bg:#FEF2F2;--red-bd:#FECACA;
+  --indigo:#6366F1;--navy:#0A1628;
+  --success:#059669;--danger:#DC2626;--warn:#D97706;
+  --success-light:#D1FAE5;--danger-light:#FEE2E2;--warn-light:#FEF3C7;
+}
+@media(prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --bg:#0A1520;--surface:#0F1E2E;--surface2:#142030;--border:#1E3448;
+    --text:#E2EAF4;--text-2:#94A3B8;--text-3:#4A6080;
+    --header:#071018;--header-text:#C5D4E3;--accent:#38BDF8;
+    --green:#34D399;--green-bg:#052E1A;--green-bd:#065F30;
+    --amber:#FBBF24;--amber-bg:#1C1100;--amber-bd:#78400A;
+    --red:#F87171;--red-bg:#200808;--red-bd:#7F1D1D;
+    --success:#34D399;--danger:#F87171;--warn:#FBBF24;
+    --success-light:rgba(52,211,153,0.12);--danger-light:rgba(248,113,113,0.12);--warn-light:rgba(251,191,36,0.12);
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#0A1520;--surface:#0F1E2E;--surface2:#142030;--border:#1E3448;
+  --text:#E2EAF4;--text-2:#94A3B8;--text-3:#4A6080;
+  --header:#071018;--header-text:#C5D4E3;--accent:#38BDF8;
+  --green:#34D399;--green-bg:#052E1A;--green-bd:#065F30;
+  --amber:#FBBF24;--amber-bg:#1C1100;--amber-bd:#78400A;
+  --red:#F87171;--red-bg:#200808;--red-bd:#7F1D1D;
+  --success:#34D399;--danger:#F87171;--warn:#FBBF24;
+  --success-light:rgba(52,211,153,0.12);--danger-light:rgba(248,113,113,0.12);--warn-light:rgba(251,191,36,0.12);
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Inter',-apple-system,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;font-size:14px;line-height:1.5}
+
+/* HEADER */
+.hdr{background:var(--header);padding:20px 32px 0}
+.hdr-top{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:14px;gap:20px}
+.hdr-brand{font-size:10px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:#3A6A8A;margin-bottom:3px}
+.hdr-title{font-size:19px;font-weight:700;color:var(--header-text)}
+.hdr-right{display:flex;flex-direction:column;align-items:flex-end;gap:8px}
+.hdr-meta{font-size:11px;color:#3A6A8A;line-height:1.8;text-align:right}
+.hdr-meta strong{color:#5A9EC4;font-weight:500}
+
+/* DATE SELECTOR */
+.date-selector-wrap{display:flex;align-items:center;gap:8px}
+.date-label{font-size:11px;color:#4A7FA5;font-weight:600}
+.date-select{background:#1A3050;border:1px solid #2A4870;color:#C5D4E3;font-family:'Inter',sans-serif;font-size:12px;font-weight:600;padding:5px 10px;border-radius:6px;cursor:pointer;outline:none;appearance:none;-webkit-appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%235A9EC4' stroke-width='2'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 8px center;padding-right:28px}
+.date-select:hover{border-color:#3A6A8A}
+
+/* TABS */
+.tabs{display:flex;border-top:1px solid #1A3050;margin-top:14px}
+.tab-btn{padding:10px 22px;font-size:13px;font-weight:600;color:#3A6A8A;background:none;border:none;cursor:pointer;border-bottom:3px solid transparent;transition:all .15s;font-family:'Inter',sans-serif}
+.tab-btn:hover{color:var(--header-text)}
+.tab-btn.active{color:#7DCBF0;border-bottom-color:#0A7EA4}
+
+/* BODY */
+.body{padding:24px 32px;max-width:1100px;margin:0 auto}
+.panel{display:none}.panel.active{display:block}
+
+/* SLA RULE BANNER */
+.sla-rule{display:flex;align-items:center;gap:10px;background:var(--surface);border:1px solid var(--border);border-left:3px solid var(--accent);border-radius:6px;padding:10px 16px;margin-bottom:20px;font-size:12px;color:var(--text-2)}
+.sla-rule span{color:var(--accent);font-weight:600;font-size:13px}
+
+/* SDR CARDS */
+.sdr-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:24px}
+.sdr-card{background:var(--surface);border:1px solid var(--border);border-radius:10px;overflow:hidden}
+.sdr-card-header{padding:12px 16px 10px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
+.sdr-name{font-size:14px;font-weight:700;color:var(--text)}
+.sdr-n{font-size:11px;font-weight:600;color:var(--text-3);background:var(--surface2);padding:2px 8px;border-radius:20px;border:1px solid var(--border)}
+.kpi-grid{display:grid;grid-template-columns:1fr 1fr}
+.kpi-item{padding:12px 16px;border-bottom:1px solid var(--border);border-right:1px solid var(--border)}
+.kpi-item:nth-child(even){border-right:none}
+.kpi-item:nth-child(n+3){border-bottom:none}
+.kpi-label{font-size:10px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--text-3);margin-bottom:4px}
+.kpi-value{font-size:20px;font-weight:700;font-variant-numeric:tabular-nums;color:var(--text);line-height:1.2}
+.kpi-sub{font-size:11px;color:var(--text-3);margin-top:2px}
+.kpi-value.green{color:var(--green)}.kpi-value.amber{color:var(--amber)}.kpi-value.red{color:var(--red)}
+
+/* VIOLATIONS TABLE */
+.vio-section{background:var(--surface);border:1px solid var(--border);border-radius:10px;overflow:hidden;margin-bottom:24px}
+.vtable{width:100%;border-collapse:collapse;font-size:12.5px}
+.vtable thead th{padding:8px 14px;text-align:left;font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--text-3);background:var(--surface2);border-bottom:1px solid var(--border);white-space:nowrap}
+.vtable tbody tr{border-bottom:1px solid var(--border)}
+.vtable tbody tr:last-child{border-bottom:none}
+.vtable tbody tr:hover{background:var(--surface2)}
+.vtable tbody td{padding:7px 14px;color:var(--text-2);vertical-align:middle}
+.td-name{color:var(--text);font-weight:500;max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.td-time{font-family:'JetBrains Mono',monospace;font-size:12px}
+.td-sdr{font-weight:600;color:var(--text);white-space:nowrap}
+.td-sla{font-weight:700;font-family:'JetBrains Mono',monospace;font-size:12px;font-variant-numeric:tabular-nums}
+.sla-crit{color:var(--red)}.sla-warn{color:var(--amber)}
+
+/* SECTION TITLE */
+.sec-title{font-size:10.5px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--text-3);margin-bottom:12px;padding-top:14px;border-top:1px solid var(--border)}
+.sec-title.first{border-top:none;padding-top:0}
+.run-info{font-size:11px;color:var(--text-3);margin-bottom:18px;display:flex;align-items:center;gap:8px}
+.dot{width:6px;height:6px;background:var(--green);border-radius:50%;display:inline-block;flex-shrink:0}
+
+/* === HISTORICAL ANALYSIS === */
+.kpi-strip{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:24px}
+.kpi-card{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:18px 20px 14px;position:relative;overflow:hidden}
+.kpi-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:var(--kc,var(--accent))}
+.kc-green{--kc:#059669}.kc-indigo{--kc:#6366F1}.kc-amber{--kc:#D97706}.kc-red{--kc:#DC2626}
+.kpi-card .kl{font-size:11px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--text-2);margin-bottom:8px}
+.kpi-card .kv{font-family:'DM Serif Display',Georgia,serif;font-size:30px;line-height:1;color:var(--text);font-variant-numeric:tabular-nums;margin-bottom:4px}
+.kpi-card .ks{font-size:11px;color:var(--text-3)}
+
+/* BUCKET TABLE */
+.bucket-section{background:var(--surface);border:1px solid var(--border);border-radius:10px;overflow:hidden;margin-bottom:20px}
+.btable{width:100%;border-collapse:collapse;font-size:13px}
+.btable th{text-align:left;padding:9px 14px;color:var(--text-3);font-weight:700;font-size:10px;letter-spacing:.1em;text-transform:uppercase;border-bottom:2px solid var(--border);background:var(--surface2)}
+.btable td{padding:11px 14px;border-bottom:1px solid var(--border);color:var(--text-2);vertical-align:middle}
+.btable tr:last-child td{border-bottom:none}
+.btable tr.hl-row td{background:rgba(5,150,105,.05)}
+.btable tr.warn-row td{background:rgba(220,38,38,.03)}
+.bar-wrap{display:flex;align-items:center;gap:8px}
+.bar-bg{flex:1;height:6px;background:var(--border);border-radius:3px;max-width:120px}
+.bar-fill{height:100%;border-radius:3px}
+.bar-val{font-weight:700;font-size:12px;min-width:30px}
+
+/* SDR COMPARISON TABLE */
+.sdr-comp-section{background:var(--surface);border:1px solid var(--border);border-radius:10px;overflow:hidden;margin-bottom:16px}
+.comp-table{width:100%;border-collapse:collapse;font-size:13px}
+.comp-table th{text-align:left;padding:9px 14px;color:var(--text-3);font-weight:700;font-size:10px;letter-spacing:.08em;text-transform:uppercase;border-bottom:2px solid var(--border);background:var(--surface2)}
+.comp-table td{padding:12px 14px;border-bottom:1px solid var(--border);vertical-align:middle}
+.comp-table tr:last-child td{border-bottom:none}
+.pill{display:inline-block;font-size:11px;font-weight:700;padding:2px 9px;border-radius:20px}
+.pill-good{background:var(--success-light);color:var(--success)}
+.pill-warn{background:var(--warn-light);color:var(--warn)}
+.pill-bad{background:var(--danger-light);color:var(--danger)}
+
+/* INSIGHT BOXES */
+.insight-row{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:16px}
+.insight-box{border-radius:8px;padding:14px 16px}
+.ib-good{background:rgba(5,150,105,.06);border:1px solid rgba(5,150,105,.2)}
+.ib-warn{background:rgba(245,158,11,.07);border:1px solid rgba(245,158,11,.25)}
+.ib-bad{background:rgba(220,38,38,.06);border:1px solid rgba(220,38,38,.2)}
+.ib-title{font-size:11px;font-weight:700;margin-bottom:5px}
+.ib-text{font-size:12px;color:var(--text-2);line-height:1.55}
+.ib-good .ib-title{color:var(--success)}.ib-warn .ib-title{color:var(--warn)}.ib-bad .ib-title{color:var(--danger)}
+
+/* METHODOLOGY NOTE */
+.method-note{font-size:11px;color:var(--text-3);line-height:1.6;padding:10px 14px;background:var(--surface);border-radius:6px;border:1px solid var(--border);margin-bottom:20px}
+
+/* VELOCITY COMPARISON */
+.vel-compare{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px}
+.vel-box{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:16px 20px}
+.vel-label{font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--text-3);margin-bottom:8px}
+.vel-perc{font-family:'DM Serif Display',Georgia,serif;font-size:28px;line-height:1;margin-bottom:6px}
+.vel-perc.good{color:var(--success)}.vel-perc.bad{color:var(--danger)}
+.vel-rates{display:flex;gap:16px;font-size:12px;color:var(--text-2);margin-bottom:8px}
+.vel-rates strong{color:var(--text);font-variant-numeric:tabular-nums}
+.vel-note{font-size:12px;color:var(--text-3);line-height:1.5}
+
+@media(max-width:800px){
+  .sdr-grid,.kpi-strip,.insight-row,.vel-compare{grid-template-columns:1fr}
+  .hdr-top{flex-direction:column}
+  .hdr-right{align-items:flex-start}
+  .body{padding:16px}
+}
+</style>
+</head>
+<body>
+
+<div class="hdr">
+  <div class="hdr-top">
+    <div>
+      <div class="hdr-brand">Sales Operations · TripleTen BR</div>
+      <div class="hdr-title">SDR Ops — SLA Diário &amp; Análise de Conversão</div>
+    </div>
+    <div class="hdr-right">
+      <div class="date-selector-wrap">
+        <span class="date-label">Data:</span>
+        <select class="date-select" id="dateSelect" onchange="changeDate(this.value)">
+          <option value="2026-08-25">Terça · 25/08</option>
+          <option value="2026-08-24">Segunda · 24/08</option>
+        </select>
+      </div>
+      <div class="hdr-meta">
+        <strong>Pipeline:</strong> Brazil / Sales (110797558)<br>
+        <strong>Meta SLA:</strong> ≤ 30min · Seg–Sex 08h–18h BRT
+      </div>
+    </div>
+  </div>
+  <div class="tabs">
+    <button class="tab-btn active" onclick="showTab('sla',this)">SLA Diário</button>
+    <button class="tab-btn" onclick="showTab('analysis',this)">Análise Histórica · Jul–Ago</button>
+  </div>
+</div>
+
+<div class="body">
+
+<!-- ===== SLA DIÁRIO ===== -->
+<div id="panel-sla" class="panel active">
+  <div class="run-info" id="run-info-text">
+    <span class="dot"></span>
+    <span id="run-info-label">Carregando...</span>
+  </div>
+
+  <div class="sla-rule">
+    <span>Meta: ≤ 30min</span> em horário comercial (Seg–Sex 08h–18h BRT) · RA → MIN(Taken to Work, Contact Established)
+  </div>
+
+  <div class="sec-title first" id="sla-day-label">Desempenho por SDR Manager</div>
+  <div class="sdr-grid" id="sdr-grid-area"></div>
+
+  <div class="sec-title" id="vio-title">Maiores violações de SLA (&gt;30min úteis)</div>
+  <div class="vio-section">
+    <table class="vtable">
+      <thead><tr>
+        <th>SDR Manager</th><th>Lead</th><th>RA (BRT)</th><th>1º Contato (BRT)</th><th>SLA útil</th>
+      </tr></thead>
+      <tbody id="viol-tbody"></tbody>
+    </table>
+  </div>
+</div>
+
+<!-- ===== ANÁLISE HISTÓRICA ===== -->
+<div id="panel-analysis" class="panel">
+
+  <div class="sec-title first">Resumo Executivo · 3 SDR Managers · Jul 1 – Ago 25, 2026 · n=8.087 leads</div>
+  <div class="kpi-strip">
+    <div class="kpi-card kc-indigo">
+      <div class="kl">Total de Leads</div>
+      <div class="kv">8.087</div>
+      <div class="ks">Jul 1 – Ago 25 · 3 SDRs ativos</div>
+    </div>
+    <div class="kpi-card kc-green">
+      <div class="kl">Atendidos em ≤30min</div>
+      <div class="kv">53,9%</div>
+      <div class="ks">3.423 de 6.353 leads em dias úteis</div>
+    </div>
+    <div class="kpi-card kc-indigo">
+      <div class="kl">Com Primeiro Contato</div>
+      <div class="kv">84,7%</div>
+      <div class="ks">5.381 de 6.353 · dias úteis</div>
+    </div>
+    <div class="kpi-card kc-red">
+      <div class="kl">Sem Contato Registrado</div>
+      <div class="kv">972</div>
+      <div class="ks">15,3% dos leads em dias úteis</div>
+    </div>
+  </div>
+
+  <div class="sec-title">Distribuição de SLA · Dias Úteis · n=6.353</div>
+  <div class="bucket-section">
+    <table class="btable">
+      <thead><tr>
+        <th style="width:110px">Faixa SLA</th>
+        <th style="width:60px;text-align:right">N</th>
+        <th>% dos leads em dias úteis</th>
+      </tr></thead>
+      <tbody>
+        <tr class="hl-row">
+          <td><strong style="color:var(--success)">≤30 min</strong></td>
+          <td style="text-align:right"><strong>3.423</strong></td>
+          <td><div class="bar-wrap"><div class="bar-bg"><div class="bar-fill" style="width:100%;background:#34D399"></div></div><div class="bar-val" style="color:var(--text)">53,9%</div></div></td>
+        </tr>
+        <tr>
+          <td><span style="color:var(--warn)">31–60 min</span></td>
+          <td style="text-align:right">446</td>
+          <td><div class="bar-wrap"><div class="bar-bg"><div class="bar-fill" style="width:13%;background:#F59E0B"></div></div><div class="bar-val" style="color:var(--warn)">7,0%</div></div></td>
+        </tr>
+        <tr>
+          <td><span style="color:var(--warn)">1–2h</span></td>
+          <td style="text-align:right">369</td>
+          <td><div class="bar-wrap"><div class="bar-bg"><div class="bar-fill" style="width:11%;background:#F59E0B"></div></div><div class="bar-val" style="color:var(--warn)">5,8%</div></div></td>
+        </tr>
+        <tr>
+          <td><span style="color:var(--danger)">2–4h</span></td>
+          <td style="text-align:right">716</td>
+          <td><div class="bar-wrap"><div class="bar-bg"><div class="bar-fill" style="width:21%;background:#F87171"></div></div><div class="bar-val" style="color:var(--danger)">11,3%</div></div></td>
+        </tr>
+        <tr>
+          <td><span style="color:var(--danger)">4–8h</span></td>
+          <td style="text-align:right">377</td>
+          <td><div class="bar-wrap"><div class="bar-bg"><div class="bar-fill" style="width:11%;background:#F87171"></div></div><div class="bar-val" style="color:var(--danger)">5,9%</div></div></td>
+        </tr>
+        <tr>
+          <td><span style="color:var(--danger)">&gt;8h</span></td>
+          <td style="text-align:right">50</td>
+          <td><div class="bar-wrap"><div class="bar-bg"><div class="bar-fill" style="width:1.5%;background:#DC2626"></div></div><div class="bar-val" style="color:var(--danger)">0,8%</div></div></td>
+        </tr>
+        <tr style="border-top:2px solid var(--border)">
+          <td style="color:var(--text-3);font-style:italic">Sem contato</td>
+          <td style="text-align:right;color:var(--text-3)">972</td>
+          <td><div class="bar-wrap"><div class="bar-bg"><div class="bar-fill" style="width:28%;background:#CBD5E1"></div></div><div class="bar-val" style="color:var(--text-3)">15,3%</div></div></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="sec-title">SLA por Horário de Entrada · Dias Úteis · Todos os horários</div>
+  <div class="method-note" style="margin-bottom:12px">Como o SLA muda conforme o horário em que o lead é atribuído (RA). Leads que entram após as 18h ou antes das 08h são atendidos no próximo dia útil — daí o SLA elevado fora do horário comercial. O time inicia majoritariamente às 10h.</div>
+  <div class="bucket-section">
+    <table class="btable">
+      <thead><tr>
+        <th style="width:70px">Hora RA</th>
+        <th style="width:55px;text-align:right">N</th>
+        <th style="width:200px">% Atendido em ≤30min</th>
+        <th style="width:120px">Mediana SLA</th>
+        <th style="width:60px">Janela</th>
+      </tr></thead>
+      <tbody>
+        <tr style="background:rgba(100,116,139,.06)"><td colspan="5" style="font-size:11px;color:var(--text-3);padding:6px 12px;font-weight:600">— Antes do horário comercial —</td></tr>
+        <tr><td style="color:var(--text-2)">08h</td><td style="text-align:right">302</td><td><div class="bar-wrap"><div class="bar-bg"><div class="bar-fill" style="width:34%;background:#F59E0B"></div></div><div class="bar-val" style="color:var(--warn)">34%</div></div></td><td style="color:var(--warn)">1h13min</td><td style="font-size:11px;color:var(--text-3)">comercial</td></tr>
+        <tr><td style="color:var(--text-2)">09h</td><td style="text-align:right">371</td><td><div class="bar-wrap"><div class="bar-bg"><div class="bar-fill" style="width:44%;background:#F59E0B"></div></div><div class="bar-val" style="color:var(--warn)">44%</div></div></td><td style="color:var(--warn)">27min</td><td style="font-size:11px;color:var(--text-3)">comercial</td></tr>
+        <tr style="background:rgba(100,116,139,.06)"><td colspan="5" style="font-size:11px;color:var(--text-3);padding:6px 12px;font-weight:600">— Horário comercial (time majoritariamente ativo) —</td></tr>
+        <tr style="background:rgba(5,150,105,.04)"><td style="color:var(--success);font-weight:600">10h</td><td style="text-align:right">382</td><td><div class="bar-wrap"><div class="bar-bg"><div class="bar-fill" style="width:62%;background:#34D399"></div></div><div class="bar-val" style="color:var(--success)">62%</div></div></td><td style="color:var(--success);font-weight:600">15min</td><td style="font-size:11px;color:var(--text-3)">comercial</td></tr>
+        <tr style="background:rgba(5,150,105,.04)"><td style="color:var(--success);font-weight:600">11h</td><td style="text-align:right">485</td><td><div class="bar-wrap"><div class="bar-bg"><div class="bar-fill" style="width:71%;background:#34D399"></div></div><div class="bar-val" style="color:var(--success)">71%</div></div></td><td style="color:var(--success);font-weight:600">9min</td><td style="font-size:11px;color:var(--text-3)">comercial</td></tr>
+        <tr style="background:rgba(5,150,105,.04)"><td style="color:var(--success);font-weight:600">12h</td><td style="text-align:right">423</td><td><div class="bar-wrap"><div class="bar-bg"><div class="bar-fill" style="width:77%;background:#34D399"></div></div><div class="bar-val" style="color:var(--success)">77%</div></div></td><td style="color:var(--success);font-weight:600">9min</td><td style="font-size:11px;color:var(--text-3)">comercial</td></tr>
+        <tr style="background:rgba(5,150,105,.04)"><td style="color:var(--success);font-weight:600">13h</td><td style="text-align:right">392</td><td><div class="bar-wrap"><div class="bar-bg"><div class="bar-fill" style="width:75%;background:#34D399"></div></div><div class="bar-val" style="color:var(--success)">75%</div></div></td><td style="color:var(--success);font-weight:600">8min</td><td style="font-size:11px;color:var(--text-3)">comercial</td></tr>
+        <tr style="background:rgba(5,150,105,.04)"><td style="color:var(--success);font-weight:600">14h</td><td style="text-align:right">363</td><td><div class="bar-wrap"><div class="bar-bg"><div class="bar-fill" style="width:81%;background:#34D399"></div></div><div class="bar-val" style="color:var(--success)">81%</div></div></td><td style="color:var(--success);font-weight:600">8min</td><td style="font-size:11px;color:var(--text-3)">comercial</td></tr>
+        <tr style="background:rgba(5,150,105,.04)"><td style="color:var(--success);font-weight:600">15h</td><td style="text-align:right">313</td><td><div class="bar-wrap"><div class="bar-bg"><div class="bar-fill" style="width:79%;background:#34D399"></div></div><div class="bar-val" style="color:var(--success)">79%</div></div></td><td style="color:var(--success);font-weight:600">6min</td><td style="font-size:11px;color:var(--text-3)">comercial</td></tr>
+        <tr style="background:rgba(5,150,105,.04)"><td style="color:var(--success);font-weight:600">16h</td><td style="text-align:right">274</td><td><div class="bar-wrap"><div class="bar-bg"><div class="bar-fill" style="width:80%;background:#34D399"></div></div><div class="bar-val" style="color:var(--success)">80%</div></div></td><td style="color:var(--success);font-weight:600">6min</td><td style="font-size:11px;color:var(--text-3)">comercial</td></tr>
+        <tr style="background:rgba(5,150,105,.04)"><td style="color:var(--success);font-weight:600">17h</td><td style="text-align:right">266</td><td><div class="bar-wrap"><div class="bar-bg"><div class="bar-fill" style="width:76%;background:#34D399"></div></div><div class="bar-val" style="color:var(--success)">76%</div></div></td><td style="color:var(--success);font-weight:600">7min</td><td style="font-size:11px;color:var(--text-3)">comercial</td></tr>
+        <tr style="background:rgba(100,116,139,.06)"><td colspan="5" style="font-size:11px;color:var(--text-3);padding:6px 12px;font-weight:600">— Após horário comercial (atendimento no próximo dia útil) —</td></tr>
+        <tr><td style="color:var(--text-2)">18h</td><td style="text-align:right">271</td><td><div class="bar-wrap"><div class="bar-bg"><div class="bar-fill" style="width:70%;background:#F59E0B"></div></div><div class="bar-val" style="color:var(--warn)">70%</div></div></td><td style="color:var(--warn)">0min*</td><td style="font-size:11px;color:var(--text-3)">transição</td></tr>
+        <tr><td style="color:var(--text-2)">19h</td><td style="text-align:right">263</td><td><div class="bar-wrap"><div class="bar-bg"><div class="bar-fill" style="width:32%;background:#F87171"></div></div><div class="bar-val" style="color:var(--danger)">32%</div></div></td><td style="color:var(--danger)">1h40min</td><td style="font-size:11px;color:var(--text-3)">pós-exp.</td></tr>
+        <tr><td style="color:var(--text-2)">20h</td><td style="text-align:right">297</td><td><div class="bar-wrap"><div class="bar-bg"><div class="bar-fill" style="width:27%;background:#F87171"></div></div><div class="bar-val" style="color:var(--danger)">27%</div></div></td><td style="color:var(--danger)">1h33min</td><td style="font-size:11px;color:var(--text-3)">pós-exp.</td></tr>
+        <tr><td style="color:var(--text-2)">21h</td><td style="text-align:right">314</td><td><div class="bar-wrap"><div class="bar-bg"><div class="bar-fill" style="width:30%;background:#F87171"></div></div><div class="bar-val" style="color:var(--danger)">30%</div></div></td><td style="color:var(--danger)">1h33min</td><td style="font-size:11px;color:var(--text-3)">pós-exp.</td></tr>
+        <tr><td style="color:var(--text-2)">22h</td><td style="text-align:right">343</td><td><div class="bar-wrap"><div class="bar-bg"><div class="bar-fill" style="width:33%;background:#F87171"></div></div><div class="bar-val" style="color:var(--danger)">33%</div></div></td><td style="color:var(--danger)">1h19min</td><td style="font-size:11px;color:var(--text-3)">pós-exp.</td></tr>
+        <tr><td style="color:var(--text-2)">23h</td><td style="text-align:right">284</td><td><div class="bar-wrap"><div class="bar-bg"><div class="bar-fill" style="width:33%;background:#F87171"></div></div><div class="bar-val" style="color:var(--danger)">33%</div></div></td><td style="color:var(--danger)">1h13min</td><td style="font-size:11px;color:var(--text-3)">pós-exp.</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="method-note" style="margin-bottom:20px">* 18h: leads que chegam no fim do expediente ainda são atendidos imediatamente por parte do time. A mediana "0min" reflete leads atendidos segundos após a atribuição. A partir de 19h o padrão muda: o time já encerrou e o atendimento ocorre na manhã seguinte, explicando o SLA elevado medido em horário comercial.</div>
+
+  <div class="vel-compare">
+    <div class="vel-box">
+      <div class="vel-label">⚡ Melhor janela · 14h–16h</div>
+      <div class="vel-perc good">80%</div>
+      <div class="vel-rates"><span>Mediana: <strong>6–8min</strong></span><span>Volume: <strong>950 leads</strong></span></div>
+      <div class="vel-note">Pico de performance — time ativo e leads chegando em ritmo estável.</div>
+    </div>
+    <div class="vel-box">
+      <div class="vel-label">🌙 Pior janela · 19h–23h (next-day)</div>
+      <div class="vel-perc bad">30%</div>
+      <div class="vel-rates"><span>Mediana: <strong>1h13–1h40min</strong></span><span>Volume: <strong>1.501 leads</strong></span></div>
+      <div class="vel-note">Leads fora do expediente esperam até 10h do dia seguinte — impacto estrutural no SLA.</div>
+    </div>
+  </div>
+
+  <div class="sec-title">Comparativo por SDR Manager · Jul 1 – Ago 25, 2026 · Dias Úteis</div>
+  <div class="sdr-comp-section">
+    <table class="comp-table">
+      <thead><tr>
+        <th style="width:180px">SDR Manager</th>
+        <th>Leads (dias úteis)</th>
+        <th>Mediana SLA</th>
+        <th>% em ≤30min</th>
+        <th>Com contato</th>
+        <th>Status</th>
+      </tr></thead>
+      <tbody>
+        <tr>
+          <td style="font-weight:700">Tayrinne Fernandes <span style="color:var(--success);font-size:11px">★</span></td>
+          <td style="font-weight:700">2.754</td>
+          <td style="color:var(--success);font-weight:700">12min</td>
+          <td style="color:var(--success);font-weight:700">61%</td>
+          <td style="color:var(--success)">88%</td>
+          <td><span class="pill pill-good">Melhor SLA</span></td>
+        </tr>
+        <tr style="background:rgba(5,150,105,.04)">
+          <td style="font-weight:600">Isabele Moraes</td>
+          <td>1.605</td>
+          <td style="color:var(--success)">15min</td>
+          <td style="color:var(--success)">53%</td>
+          <td style="color:var(--success)">81%</td>
+          <td><span class="pill pill-good">Referência</span></td>
+        </tr>
+        <tr style="background:rgba(220,38,38,.03)">
+          <td style="font-weight:600">Leticia Brainer</td>
+          <td>1.994</td>
+          <td style="color:var(--warn)">21min</td>
+          <td style="color:var(--warn)">46%</td>
+          <td style="color:var(--success)">83%</td>
+          <td><span class="pill pill-warn">Atenção ⚠</span></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="insight-row">
+    <div class="insight-box ib-good">
+      <div class="ib-title">★ Tayrinne lidera em velocidade</div>
+      <div class="ib-text">Mediana de 12min e 61% dos leads atendidos em ≤30min. Com 2.754 leads em dias úteis, é a SDR com maior volume e melhor SLA — combinação rara e que merece reconhecimento.</div>
+    </div>
+    <div class="insight-box ib-warn">
+      <div class="ib-title">⚠ Leticia: 46% dentro da meta</div>
+      <div class="ib-text">Mediana de 21min no limite da meta, mas apenas 46% chegam a ≤30min. Com 1.994 leads, tem espaço para melhoria. Investigar se há gargalo na distribuição de carteira ou sobrecarga em certas faixas horárias.</div>
+    </div>
+    <div class="insight-box ib-good">
+      <div class="ib-title">📊 O timing importa mais que o volume</div>
+      <div class="ib-text">Leads que chegam entre 10h–17h têm 71–81% atendidos em ≤30min. Os mesmos leads às 08h chegam a apenas 34%. Não é a SDR, é o horário de entrada. Considerar priorização por janela horária.</div>
+    </div>
+  </div>
+
+  <div class="method-note"><strong>Base:</strong> 8.087 deals · pipeline Brazil/Sales (110797558) · Jul 1 – Ago 25, 2026 · 3 SDR Managers ativas. Análise de dias úteis (n=6.353). Primeiro contato = MIN(enter_date___taken_to_work, enter_date___contact_established) · SLA em minutos de horário comercial (Seg–Sex 8h–18h BRT). Dados direto do HubSpot CRM sem interpolação.</div>
+
+</div><!-- /panel-analysis -->
+
+</div><!-- /body -->
+
+<script>
+const DATA = {"2026-08-24": {"label": "Segunda · 24/08", "n_total": 206, "n_active": 200, "sdrs": {"29157433": {"name": "Isabele Moraes", "n": 99, "n_sla": 76, "n_sem": 23, "med": "27min", "med_val": 27.99030833333333, "p75": "2h57min", "pct": "54%", "pct_val": 53.94736842105263, "violacoes": [{"name": "Felipe Otavio tonin de moura", "ra": "19:18", "pc": "10:39", "sla": "12h39min"}, {"name": "Giselle Marques", "ra": "19:18", "pc": "11:39", "sla": "3h39min"}, {"name": "RNascimento ", "ra": "18:53", "pc": "11:39", "sla": "3h39min"}, {"name": "Ana Luiza Andrade Teixeira ", "ra": "19:26", "pc": "11:39", "sla": "3h39min"}, {"name": "Julia Neves Cano", "ra": "19:18", "pc": "11:39", "sla": "3h39min"}, {"name": "Michel Cristhian de Oliveira Bezerra", "ra": "19:22", "pc": "11:39", "sla": "3h39min"}, {"name": "Evellyn dos Reis ", "ra": "19:26", "pc": "11:39", "sla": "3h39min"}, {"name": "Gabriela Pereira Novaes", "ra": "19:24", "pc": "11:39", "sla": "3h39min"}, {"name": "Gustavo augusto De Sales Albornoz", "ra": "19:28", "pc": "11:19", "sla": "3h19min"}, {"name": "LIEGE AVILA", "ra": "22:54", "pc": "10:57", "sla": "2h57min"}, {"name": "Daniel Mesquita", "ra": "20:38", "pc": "10:57", "sla": "2h57min"}, {"name": "Adrielle Van haandel", "ra": "19:49", "pc": "10:57", "sla": "2h57min"}]}, "31947044": {"name": "Tayrinne Fernandes", "n": 47, "n_sla": 41, "n_sem": 6, "med": "30min", "med_val": 30.31475, "p75": "56min", "pct": "49%", "pct_val": 48.78048780487805, "violacoes": [{"name": "Gisella", "ra": "16:29", "pc": "17:42", "sla": "11h12min"}, {"name": "jean meotti", "ra": "02:26", "pc": "09:49", "sla": "1h49min"}, {"name": "Gleice Kelly Rodrigues Rodrigues", "ra": "07:52", "pc": "09:24", "sla": "1h24min"}, {"name": "fabio magalhaes", "ra": "03:31", "pc": "09:24", "sla": "1h24min"}, {"name": "Paulo Fernando Borges Fagundes", "ra": "07:46", "pc": "09:24", "sla": "1h24min"}, {"name": "Romualdo Rodrigues", "ra": "07:53", "pc": "09:20", "sla": "1h20min"}, {"name": "Walter Cecchetto Filho", "ra": "08:13", "pc": "09:24", "sla": "1h10min"}, {"name": "Luana Laurett Groner", "ra": "10:16", "pc": "11:14", "sla": "57min"}, {"name": "Thiago Victor", "ra": "09:52", "pc": "10:50", "sla": "57min"}, {"name": "Laíz Lopes ", "ra": "22:04", "pc": "08:57", "sla": "57min"}, {"name": "CRISTIANO DAMAZIO", "ra": "21:44", "pc": "08:56", "sla": "56min"}, {"name": "Rodrigo Siqueira ", "ra": "21:37", "pc": "08:55", "sla": "55min"}]}, "29933656": {"name": "Leticia Brainer", "n": 54, "n_sla": 42, "n_sem": 12, "med": "1h29min", "med_val": 89.90958333333333, "p75": "2h34min", "pct": "31%", "pct_val": 30.952380952380953, "violacoes": [{"name": "Alan Silva dos Santos", "ra": "17:49", "pc": "18:17", "sla": "10h10min"}, {"name": "Leonardo de Castro Batista", "ra": "18:48", "pc": "12:23", "sla": "4h23min"}, {"name": "Elizabete goncalves ", "ra": "20:31", "pc": "10:49", "sla": "2h49min"}, {"name": "George Rodrigues", "ra": "20:35", "pc": "10:48", "sla": "2h48min"}, {"name": "Lucas Gabriel ", "ra": "21:01", "pc": "10:47", "sla": "2h47min"}, {"name": "Karen Waechter", "ra": "21:43", "pc": "10:45", "sla": "2h45min"}, {"name": "Sthephany Cavalcante da Silva ", "ra": "21:58", "pc": "10:44", "sla": "2h44min"}, {"name": "Cineide Maria Farias", "ra": "22:40", "pc": "10:43", "sla": "2h43min"}, {"name": "Jayanne", "ra": "22:56", "pc": "10:43", "sla": "2h43min"}, {"name": "Bruna Diacira", "ra": "23:10", "pc": "10:42", "sla": "2h42min"}, {"name": "Weliton Ribeiro ", "ra": "00:01", "pc": "10:34", "sla": "2h34min"}, {"name": "Raphael Passarella neto", "ra": "02:21", "pc": "10:20", "sla": "2h20min"}]}}}, "2026-08-25": {"label": "Terça · 25/08", "n_total": 193, "n_active": 193, "sdrs": {"29157433": {"name": "Isabele Moraes", "n": 58, "n_sla": 46, "n_sem": 12, "med": "2h32min", "med_val": 152.63474166666668, "p75": "6h30min", "pct": "35%", "pct_val": 34.78260869565217, "violacoes": [{"name": "Cristiane Lopes", "ra": "19:50", "pc": "14:53", "sla": "6h53min"}, {"name": "Rafael Gomes", "ra": "19:13", "pc": "14:51", "sla": "6h51min"}, {"name": "Ana Carolina Oliveira", "ra": "20:23", "pc": "14:51", "sla": "6h51min"}, {"name": "Tamires Krause", "ra": "19:21", "pc": "14:51", "sla": "6h51min"}, {"name": "Marcos Leonardo Paixão da Silva", "ra": "19:20", "pc": "14:51", "sla": "6h51min"}, {"name": "Diego Teixeira", "ra": "19:21", "pc": "14:51", "sla": "6h51min"}, {"name": "Paulo Henrique Aragão ", "ra": "21:16", "pc": "14:30", "sla": "6h30min"}, {"name": "Camila Nonis ", "ra": "21:10", "pc": "14:30", "sla": "6h30min"}, {"name": "Lucas Alves", "ra": "20:27", "pc": "14:30", "sla": "6h30min"}, {"name": "Rodrigo Maurício Corrêa", "ra": "21:45", "pc": "14:30", "sla": "6h30min"}, {"name": "CARLOS HENRIQUE DA ROCHA WEISS", "ra": "21:28", "pc": "14:30", "sla": "6h30min"}, {"name": "BEATRIZ APARECIDA DA SILVA", "ra": "20:54", "pc": "14:30", "sla": "6h30min"}]}, "31947044": {"name": "Tayrinne Fernandes", "n": 81, "n_sla": 65, "n_sem": 16, "med": "29min", "med_val": 29.251016666666665, "p75": "1h02min", "pct": "52%", "pct_val": 52.307692307692314, "violacoes": [{"name": "Adriana Annoni", "ra": "11:41", "pc": "16:25", "sla": "4h43min"}, {"name": "Alana Munhoz", "ra": "21:21", "pc": "11:32", "sla": "3h32min"}, {"name": "Jussara Fernandes", "ra": "21:18", "pc": "11:28", "sla": "3h28min"}, {"name": "Jonathan Callai da silva", "ra": "21:07", "pc": "11:27", "sla": "3h27min"}, {"name": "Matusalem Lúcio", "ra": "21:01", "pc": "11:26", "sla": "3h26min"}, {"name": "Jose Luciano Rocha", "ra": "20:28", "pc": "11:24", "sla": "3h24min"}, {"name": "adriana rodrigues", "ra": "22:30", "pc": "11:20", "sla": "3h20min"}, {"name": "Aline Mitre Moreira", "ra": "23:31", "pc": "11:19", "sla": "3h19min"}, {"name": "Ester Medeiros", "ra": "21:43", "pc": "11:19", "sla": "3h19min"}, {"name": "Vilciani Menin", "ra": "22:49", "pc": "11:19", "sla": "3h19min"}, {"name": "Huriel Fogasso", "ra": "21:25", "pc": "11:19", "sla": "3h19min"}, {"name": "Bruna de Oliveira", "ra": "22:59", "pc": "11:19", "sla": "3h19min"}]}, "29933656": {"name": "Leticia Brainer", "n": 54, "n_sla": 46, "n_sem": 8, "med": "2h54min", "med_val": 174.272175, "p75": "6h42min", "pct": "43%", "pct_val": 43.47826086956522, "violacoes": [{"name": "Sandro Debas", "ra": "00:25", "pc": "16:08", "sla": "8h08min"}, {"name": "Letícia junckes", "ra": "14:22", "pc": "11:54", "sla": "7h31min"}, {"name": "Sibely", "ra": "20:25", "pc": "14:59", "sla": "6h59min"}, {"name": "Luciano", "ra": "21:52", "pc": "14:58", "sla": "6h58min"}, {"name": "Marcos ", "ra": "22:14", "pc": "14:56", "sla": "6h56min"}, {"name": "Aline Ribeiro", "ra": "22:37", "pc": "14:56", "sla": "6h56min"}, {"name": "Nathalie Bruzaferro", "ra": "23:43", "pc": "14:54", "sla": "6h54min"}, {"name": "Diogo Figueiredo", "ra": "22:23", "pc": "14:47", "sla": "6h47min"}, {"name": "André luiz", "ra": "22:01", "pc": "14:47", "sla": "6h47min"}, {"name": "Kalebe Gabriel", "ra": "23:53", "pc": "14:45", "sla": "6h45min"}, {"name": "Bruna Barbosa", "ra": "21:23", "pc": "14:45", "sla": "6h45min"}, {"name": "Daniela Viegas", "ra": "23:13", "pc": "14:42", "sla": "6h42min"}]}}}};
+const ORDER = ['29157433','31947044','29933656'];
+
+function colorPct(v){ return v>=75?'green':v>=50?'amber':'red'; }
+function colorMed(v){ return v<20?'green':v<=30?'amber':'red'; }
+function colorP75(v){ return v<30?'green':v<=60?'amber':'red'; }
+function slaToMin(s){
+  let m=0; const h=s.match(/(\d+)h/),mn=s.match(/(\d+)min/);
+  if(h)m+=parseInt(h[1])*60; if(mn)m+=parseInt(mn[1]); return m;
+}
+function slaClass(s){const m=slaToMin(s);return m>=300?'sla-crit':m>30?'sla-warn':'';}
+
+function renderDay(dateKey){
+  const day = DATA[dateKey];
+  if(!day)return;
+  document.getElementById('run-info-label').textContent =
+    `n=${day.n_active} leads com SDR ativo atribuído · pipeline total ${day.n_total} · horário BRT`;
+  document.getElementById('sla-day-label').textContent = `Desempenho por SDR Manager · ${day.label}`;
+  document.getElementById('vio-title').textContent = `Maiores violações de SLA (>30min úteis) · ${day.label}`;
+
+  // SDR cards
+  const grid = document.getElementById('sdr-grid-area');
+  grid.innerHTML = ORDER.map(wid=>{
+    const s=day.sdrs[wid];
+    const pctCol=colorPct(s.pct_val);
+    const medCol=colorMed(s.med_val);
+    const p75Col=colorP75(slaToMin(s.p75));
+    return `<div class="sdr-card">
+      <div class="sdr-card-header">
+        <div class="sdr-name">${s.name}</div>
+        <div class="sdr-n">${s.n} leads</div>
+      </div>
+      <div class="kpi-grid">
+        <div class="kpi-item"><div class="kpi-label">Mediana SLA</div><div class="kpi-value ${medCol}">${s.med}</div><div class="kpi-sub">tempo útil</div></div>
+        <div class="kpi-item"><div class="kpi-label">Percentil 75</div><div class="kpi-value ${p75Col}">${s.p75}</div><div class="kpi-sub">75% dos leads</div></div>
+        <div class="kpi-item"><div class="kpi-label">% dentro ≤30min</div><div class="kpi-value ${pctCol}">${s.pct}</div><div class="kpi-sub">de ${s.n_sla} com registro</div></div>
+        <div class="kpi-item"><div class="kpi-label">Sem contato</div><div class="kpi-value">${s.n_sem}</div><div class="kpi-sub">sem TW ou CE</div></div>
+      </div>
+    </div>`;
+  }).join('');
+
+  // Violations table
+  const rows=[];
+  ORDER.forEach(wid=>{
+    day.sdrs[wid].violacoes.forEach(v=>rows.push({sdr:day.sdrs[wid].name,...v}));
+  });
+  rows.sort((a,b)=>slaToMin(b.sla)-slaToMin(a.sla));
+  document.getElementById('viol-tbody').innerHTML = rows.length===0
+    ? '<tr><td colspan="5" style="text-align:center;padding:20px;color:var(--text-3);font-size:12px">Nenhuma violação de SLA ✓</td></tr>'
+    : rows.map(r=>`<tr>
+        <td class="td-sdr">${r.sdr.split(' ')[0]}</td>
+        <td class="td-name" title="${r.name}">${r.name}</td>
+        <td class="td-time">${r.ra}</td>
+        <td class="td-time">${r.pc}</td>
+        <td class="td-sla ${slaClass(r.sla)}">${r.sla}</td>
+      </tr>`).join('');
+}
+
+function changeDate(v){ renderDay(v); }
+
+function showTab(id,btn){
+  document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+  document.getElementById('panel-'+id).classList.add('active');
+  btn.classList.add('active');
+}
+
+// Init
+renderDay('2026-08-25');
+</script>
+</body>
+</html>
