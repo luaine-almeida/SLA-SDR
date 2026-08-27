@@ -72,6 +72,13 @@ body{font-family:'Inter',-apple-system,sans-serif;background:var(--bg);color:var
 .sla-rule{display:flex;align-items:center;gap:10px;background:var(--surface);border:1px solid var(--border);border-left:3px solid var(--accent);border-radius:6px;padding:10px 16px;margin-bottom:20px;font-size:12px;color:var(--text-2)}
 .sla-rule span{color:var(--accent);font-weight:600;font-size:13px}
 
+/* OFF-HOURS ALERT BANNER */
+.off-hours-banner{display:flex;align-items:center;gap:12px;border-radius:6px;padding:10px 16px;margin-bottom:20px;font-size:12px}
+.off-hours-banner.warn{background:var(--warn-light);border:1px solid var(--amber-bd);color:var(--amber)}
+.off-hours-banner.ok{background:var(--success-light);border:1px solid var(--green-bd);color:var(--green)}
+.off-icon{font-size:18px;flex-shrink:0}
+.off-pct-val{font-size:20px;font-weight:700;font-family:'JetBrains Mono',monospace;margin-right:4px}
+
 /* SDR CARDS */
 .sdr-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:24px}
 .sdr-card{background:var(--surface);border:1px solid var(--border);border-radius:10px;overflow:hidden}
@@ -183,6 +190,7 @@ body{font-family:'Inter',-apple-system,sans-serif;background:var(--bg);color:var
       <div class="date-selector-wrap">
         <span class="date-label">Data:</span>
         <select class="date-select" id="dateSelect" onchange="changeDate(this.value)">
+          <option value="2026-08-26">Quarta · 26/08</option>
           <option value="2026-08-25">Terça · 25/08</option>
           <option value="2026-08-24">Segunda · 24/08</option>
         </select>
@@ -209,8 +217,10 @@ body{font-family:'Inter',-apple-system,sans-serif;background:var(--bg);color:var
   </div>
 
   <div class="sla-rule">
-    <span>Meta: ≤ 30min</span> em horário comercial (Seg–Sex 08h–18h BRT) · RA → MIN(Taken to Work, Contact Established)
+    <span>Meta: ≤ 30min</span> em horário comercial (Seg–Sex 08h–18h BRT) · RA → MIN(Taken to Work, Contact Established) · <strong>P75</strong> = 75% dos leads foram atendidos dentro desse tempo (1 em cada 4 leva mais)
   </div>
+
+  <div id="off-hours-alert"></div>
 
   <div class="sec-title first" id="sla-day-label">Desempenho por SDR Manager</div>
   <div class="sdr-grid" id="sdr-grid-area"></div>
@@ -495,7 +505,7 @@ body{font-family:'Inter',-apple-system,sans-serif;background:var(--bg);color:var
     </div>
   </div>
 
-  <div class="method-note" style="margin-bottom:28px">* Leads sem contato registrado (n=972) e bucket >8h (n=50) apresentam taxas de reunião elevadas por viés de seleção: parte desses deals avançou para Meeting Scheduled via canal alternativo (webinar, agendamento direto) sem passar pela etapa de primeiro contato no CRM. Excluídos da comparação principal por não refletirem o fluxo convencional de SDR.</div>
+  <div class="method-note" style="margin-bottom:28px">* Leads sem contato registrado (n=972) e bucket &gt;8h (n=50) apresentam taxas de reunião elevadas por viés de seleção: parte desses deals avançou para Meeting Scheduled via canal alternativo (webinar, agendamento direto) sem passar pela etapa de primeiro contato no CRM. Excluídos da comparação principal por não refletirem o fluxo convencional de SDR.</div>
 
   <!-- RECOMENDAÇÕES PRÁTICAS -->
   <div class="sec-title">Recomendações Práticas para o Processo Comercial</div>
@@ -545,7 +555,7 @@ body{font-family:'Inter',-apple-system,sans-serif;background:var(--bg);color:var
 </div><!-- /body -->
 
 <script>
-const DATA = {"2026-08-24": {"label": "Segunda · 24/08", "n_total": 206, "n_active": 200, "sdrs": {"29157433": {"name": "Isabele Moraes", "n": 99, "n_sla": 76, "n_sem": 23, "med": "27min", "med_val": 27.99030833333333, "p75": "2h57min", "pct": "54%", "pct_val": 53.94736842105263, "violacoes": [{"name": "Felipe Otavio tonin de moura", "ra": "19:18", "pc": "10:39", "sla": "12h39min"}, {"name": "Giselle Marques", "ra": "19:18", "pc": "11:39", "sla": "3h39min"}, {"name": "RNascimento ", "ra": "18:53", "pc": "11:39", "sla": "3h39min"}, {"name": "Ana Luiza Andrade Teixeira ", "ra": "19:26", "pc": "11:39", "sla": "3h39min"}, {"name": "Julia Neves Cano", "ra": "19:18", "pc": "11:39", "sla": "3h39min"}, {"name": "Michel Cristhian de Oliveira Bezerra", "ra": "19:22", "pc": "11:39", "sla": "3h39min"}, {"name": "Evellyn dos Reis ", "ra": "19:26", "pc": "11:39", "sla": "3h39min"}, {"name": "Gabriela Pereira Novaes", "ra": "19:24", "pc": "11:39", "sla": "3h39min"}, {"name": "Gustavo augusto De Sales Albornoz", "ra": "19:28", "pc": "11:19", "sla": "3h19min"}, {"name": "LIEGE AVILA", "ra": "22:54", "pc": "10:57", "sla": "2h57min"}, {"name": "Daniel Mesquita", "ra": "20:38", "pc": "10:57", "sla": "2h57min"}, {"name": "Adrielle Van haandel", "ra": "19:49", "pc": "10:57", "sla": "2h57min"}]}, "31947044": {"name": "Tayrinne Fernandes", "n": 47, "n_sla": 41, "n_sem": 6, "med": "30min", "med_val": 30.31475, "p75": "56min", "pct": "49%", "pct_val": 48.78048780487805, "violacoes": [{"name": "Gisella", "ra": "16:29", "pc": "17:42", "sla": "11h12min"}, {"name": "jean meotti", "ra": "02:26", "pc": "09:49", "sla": "1h49min"}, {"name": "Gleice Kelly Rodrigues Rodrigues", "ra": "07:52", "pc": "09:24", "sla": "1h24min"}, {"name": "fabio magalhaes", "ra": "03:31", "pc": "09:24", "sla": "1h24min"}, {"name": "Paulo Fernando Borges Fagundes", "ra": "07:46", "pc": "09:24", "sla": "1h24min"}, {"name": "Romualdo Rodrigues", "ra": "07:53", "pc": "09:20", "sla": "1h20min"}, {"name": "Walter Cecchetto Filho", "ra": "08:13", "pc": "09:24", "sla": "1h10min"}, {"name": "Luana Laurett Groner", "ra": "10:16", "pc": "11:14", "sla": "57min"}, {"name": "Thiago Victor", "ra": "09:52", "pc": "10:50", "sla": "57min"}, {"name": "Laíz Lopes ", "ra": "22:04", "pc": "08:57", "sla": "57min"}, {"name": "CRISTIANO DAMAZIO", "ra": "21:44", "pc": "08:56", "sla": "56min"}, {"name": "Rodrigo Siqueira ", "ra": "21:37", "pc": "08:55", "sla": "55min"}]}, "29933656": {"name": "Leticia Brainer", "n": 54, "n_sla": 42, "n_sem": 12, "med": "1h29min", "med_val": 89.90958333333333, "p75": "2h34min", "pct": "31%", "pct_val": 30.952380952380953, "violacoes": [{"name": "Alan Silva dos Santos", "ra": "17:49", "pc": "18:17", "sla": "10h10min"}, {"name": "Leonardo de Castro Batista", "ra": "18:48", "pc": "12:23", "sla": "4h23min"}, {"name": "Elizabete goncalves ", "ra": "20:31", "pc": "10:49", "sla": "2h49min"}, {"name": "George Rodrigues", "ra": "20:35", "pc": "10:48", "sla": "2h48min"}, {"name": "Lucas Gabriel ", "ra": "21:01", "pc": "10:47", "sla": "2h47min"}, {"name": "Karen Waechter", "ra": "21:43", "pc": "10:45", "sla": "2h45min"}, {"name": "Sthephany Cavalcante da Silva ", "ra": "21:58", "pc": "10:44", "sla": "2h44min"}, {"name": "Cineide Maria Farias", "ra": "22:40", "pc": "10:43", "sla": "2h43min"}, {"name": "Jayanne", "ra": "22:56", "pc": "10:43", "sla": "2h43min"}, {"name": "Bruna Diacira", "ra": "23:10", "pc": "10:42", "sla": "2h42min"}, {"name": "Weliton Ribeiro ", "ra": "00:01", "pc": "10:34", "sla": "2h34min"}, {"name": "Raphael Passarella neto", "ra": "02:21", "pc": "10:20", "sla": "2h20min"}]}}}, "2026-08-25": {"label": "Terça · 25/08", "n_total": 193, "n_active": 193, "sdrs": {"29157433": {"name": "Isabele Moraes", "n": 58, "n_sla": 46, "n_sem": 12, "med": "2h32min", "med_val": 152.63474166666668, "p75": "6h30min", "pct": "35%", "pct_val": 34.78260869565217, "violacoes": [{"name": "Cristiane Lopes", "ra": "19:50", "pc": "14:53", "sla": "6h53min"}, {"name": "Rafael Gomes", "ra": "19:13", "pc": "14:51", "sla": "6h51min"}, {"name": "Ana Carolina Oliveira", "ra": "20:23", "pc": "14:51", "sla": "6h51min"}, {"name": "Tamires Krause", "ra": "19:21", "pc": "14:51", "sla": "6h51min"}, {"name": "Marcos Leonardo Paixão da Silva", "ra": "19:20", "pc": "14:51", "sla": "6h51min"}, {"name": "Diego Teixeira", "ra": "19:21", "pc": "14:51", "sla": "6h51min"}, {"name": "Paulo Henrique Aragão ", "ra": "21:16", "pc": "14:30", "sla": "6h30min"}, {"name": "Camila Nonis ", "ra": "21:10", "pc": "14:30", "sla": "6h30min"}, {"name": "Lucas Alves", "ra": "20:27", "pc": "14:30", "sla": "6h30min"}, {"name": "Rodrigo Maurício Corrêa", "ra": "21:45", "pc": "14:30", "sla": "6h30min"}, {"name": "CARLOS HENRIQUE DA ROCHA WEISS", "ra": "21:28", "pc": "14:30", "sla": "6h30min"}, {"name": "BEATRIZ APARECIDA DA SILVA", "ra": "20:54", "pc": "14:30", "sla": "6h30min"}]}, "31947044": {"name": "Tayrinne Fernandes", "n": 81, "n_sla": 65, "n_sem": 16, "med": "29min", "med_val": 29.251016666666665, "p75": "1h02min", "pct": "52%", "pct_val": 52.307692307692314, "violacoes": [{"name": "Adriana Annoni", "ra": "11:41", "pc": "16:25", "sla": "4h43min"}, {"name": "Alana Munhoz", "ra": "21:21", "pc": "11:32", "sla": "3h32min"}, {"name": "Jussara Fernandes", "ra": "21:18", "pc": "11:28", "sla": "3h28min"}, {"name": "Jonathan Callai da silva", "ra": "21:07", "pc": "11:27", "sla": "3h27min"}, {"name": "Matusalem Lúcio", "ra": "21:01", "pc": "11:26", "sla": "3h26min"}, {"name": "Jose Luciano Rocha", "ra": "20:28", "pc": "11:24", "sla": "3h24min"}, {"name": "adriana rodrigues", "ra": "22:30", "pc": "11:20", "sla": "3h20min"}, {"name": "Aline Mitre Moreira", "ra": "23:31", "pc": "11:19", "sla": "3h19min"}, {"name": "Ester Medeiros", "ra": "21:43", "pc": "11:19", "sla": "3h19min"}, {"name": "Vilciani Menin", "ra": "22:49", "pc": "11:19", "sla": "3h19min"}, {"name": "Huriel Fogasso", "ra": "21:25", "pc": "11:19", "sla": "3h19min"}, {"name": "Bruna de Oliveira", "ra": "22:59", "pc": "11:19", "sla": "3h19min"}]}, "29933656": {"name": "Leticia Brainer", "n": 54, "n_sla": 46, "n_sem": 8, "med": "2h54min", "med_val": 174.272175, "p75": "6h42min", "pct": "43%", "pct_val": 43.47826086956522, "violacoes": [{"name": "Sandro Debas", "ra": "00:25", "pc": "16:08", "sla": "8h08min"}, {"name": "Letícia junckes", "ra": "14:22", "pc": "11:54", "sla": "7h31min"}, {"name": "Sibely", "ra": "20:25", "pc": "14:59", "sla": "6h59min"}, {"name": "Luciano", "ra": "21:52", "pc": "14:58", "sla": "6h58min"}, {"name": "Marcos ", "ra": "22:14", "pc": "14:56", "sla": "6h56min"}, {"name": "Aline Ribeiro", "ra": "22:37", "pc": "14:56", "sla": "6h56min"}, {"name": "Nathalie Bruzaferro", "ra": "23:43", "pc": "14:54", "sla": "6h54min"}, {"name": "Diogo Figueiredo", "ra": "22:23", "pc": "14:47", "sla": "6h47min"}, {"name": "André luiz", "ra": "22:01", "pc": "14:47", "sla": "6h47min"}, {"name": "Kalebe Gabriel", "ra": "23:53", "pc": "14:45", "sla": "6h45min"}, {"name": "Bruna Barbosa", "ra": "21:23", "pc": "14:45", "sla": "6h45min"}, {"name": "Daniela Viegas", "ra": "23:13", "pc": "14:42", "sla": "6h42min"}]}}}};
+const DATA = {"2026-08-26": {"label": "Quarta · 26/08", "n_total": 382, "n_active": 198, "n_off": 184, "off_pct": "48.2%", "sdrs": {"29157433": {"name": "Isabele Moraes", "n": 69, "n_sla": 48, "n_sem": 21, "med": "40min", "med_val": 39.85, "p75": "1h38min", "pct": "38%", "pct_val": 37.5, "violacoes": [{"name": "Daniel Ribeiro Reis", "ra": "08:09", "pc": "11:40", "sla": "3h30min"}, {"name": "Paulo Roberto", "ra": "08:11", "pc": "11:40", "sla": "3h28min"}, {"name": "Ricardo Antonio", "ra": "08:16", "pc": "11:21", "sla": "3h05min"}, {"name": "Gabriel Mendes Souza", "ra": "08:27", "pc": "11:21", "sla": "2h54min"}, {"name": "Kátia Mayara", "ra": "08:44", "pc": "11:21", "sla": "2h37min"}, {"name": "Renato Lucio de Oliveira Martins", "ra": "08:55", "pc": "11:21", "sla": "2h26min"}, {"name": "Nathan barbosa", "ra": "09:06", "pc": "11:21", "sla": "2h15min"}, {"name": "Matheus Frota", "ra": "09:13", "pc": "11:21", "sla": "2h08min"}, {"name": "Vivian Mello", "ra": "12:39", "pc": "14:46", "sla": "2h07min"}, {"name": "Ellen Felícia Ferreira Miranda", "ra": "09:30", "pc": "11:21", "sla": "1h51min"}, {"name": "Aline Bernardes", "ra": "09:37", "pc": "11:21", "sla": "1h44min"}, {"name": "giselle Hilario", "ra": "15:20", "pc": "16:58", "sla": "1h38min"}]}, "31947044": {"name": "Tayrinne Fernandes", "n": 63, "n_sla": 38, "n_sem": 25, "med": "12min", "med_val": 12.25, "p75": "28min", "pct": "76%", "pct_val": 76.3, "violacoes": [{"name": "Igor de Oliveira", "ra": "08:36", "pc": "09:38", "sla": "1h02min"}, {"name": "Léia Boechat", "ra": "09:55", "pc": "10:53", "sla": "58min"}, {"name": "Renan Vasconcellos", "ra": "08:41", "pc": "09:38", "sla": "57min"}, {"name": "Carla Lessa", "ra": "09:58", "pc": "10:53", "sla": "55min"}, {"name": "Ade Oliveira", "ra": "10:03", "pc": "10:53", "sla": "50min"}, {"name": "Ravini Villas Boas", "ra": "13:04", "pc": "13:52", "sla": "48min"}, {"name": "Lidiane Giori da Silva", "ra": "08:55", "pc": "09:38", "sla": "44min"}, {"name": "Fernando", "ra": "09:00", "pc": "09:38", "sla": "39min"}, {"name": "Suellen Rocha", "ra": "09:26", "pc": "09:57", "sla": "31min"}]}, "29933656": {"name": "Leticia Brainer", "n": 66, "n_sla": 52, "n_sem": 14, "med": "39min", "med_val": 39.09, "p75": "1h25min", "pct": "38%", "pct_val": 38.5, "violacoes": [{"name": "Lucas carvalho", "ra": "11:48", "pc": "16:28", "sla": "4h39min"}, {"name": "Rhuan Matheus", "ra": "08:05", "pc": "11:44", "sla": "3h38min"}, {"name": "Miriã Michelle", "ra": "08:08", "pc": "11:44", "sla": "3h35min"}, {"name": "Rodrigo Melo", "ra": "08:11", "pc": "11:41", "sla": "3h31min"}, {"name": "Jefferson Diogo", "ra": "14:29", "pc": "18:16", "sla": "3h30min"}, {"name": "Carol Marques", "ra": "08:20", "pc": "11:40", "sla": "3h21min"}, {"name": "Glaucia Araujo", "ra": "08:29", "pc": "11:26", "sla": "2h57min"}, {"name": "Rafael Lima", "ra": "09:02", "pc": "11:19", "sla": "2h17min"}, {"name": "Mirian Portela", "ra": "09:11", "pc": "11:14", "sla": "2h04min"}, {"name": "Zito Campos", "ra": "10:48", "pc": "12:51", "sla": "2h03min"}, {"name": "Bianca Moreira", "ra": "09:16", "pc": "11:14", "sla": "1h58min"}, {"name": "Priscilla Braga", "ra": "09:33", "pc": "11:01", "sla": "1h28min"}]}}}, "2026-08-25": {"label": "Terça · 25/08", "n_total": 193, "n_active": 193, "sdrs": {"29157433": {"name": "Isabele Moraes", "n": 58, "n_sla": 46, "n_sem": 12, "med": "2h32min", "med_val": 152.63474166666668, "p75": "6h30min", "pct": "35%", "pct_val": 34.78260869565217, "violacoes": [{"name": "Cristiane Lopes", "ra": "19:50", "pc": "14:53", "sla": "6h53min"}, {"name": "Rafael Gomes", "ra": "19:13", "pc": "14:51", "sla": "6h51min"}, {"name": "Ana Carolina Oliveira", "ra": "20:23", "pc": "14:51", "sla": "6h51min"}, {"name": "Tamires Krause", "ra": "19:21", "pc": "14:51", "sla": "6h51min"}, {"name": "Marcos Leonardo Paixão da Silva", "ra": "19:20", "pc": "14:51", "sla": "6h51min"}, {"name": "Diego Teixeira", "ra": "19:21", "pc": "14:51", "sla": "6h51min"}, {"name": "Paulo Henrique Aragão ", "ra": "21:16", "pc": "14:30", "sla": "6h30min"}, {"name": "Camila Nonis ", "ra": "21:10", "pc": "14:30", "sla": "6h30min"}, {"name": "Lucas Alves", "ra": "20:27", "pc": "14:30", "sla": "6h30min"}, {"name": "Rodrigo Maurício Corrêa", "ra": "21:45", "pc": "14:30", "sla": "6h30min"}, {"name": "CARLOS HENRIQUE DA ROCHA WEISS", "ra": "21:28", "pc": "14:30", "sla": "6h30min"}, {"name": "BEATRIZ APARECIDA DA SILVA", "ra": "20:54", "pc": "14:30", "sla": "6h30min"}]}, "31947044": {"name": "Tayrinne Fernandes", "n": 81, "n_sla": 65, "n_sem": 16, "med": "29min", "med_val": 29.251016666666665, "p75": "1h02min", "pct": "52%", "pct_val": 52.307692307692314, "violacoes": [{"name": "Adriana Annoni", "ra": "11:41", "pc": "16:25", "sla": "4h43min"}, {"name": "Alana Munhoz", "ra": "21:21", "pc": "11:32", "sla": "3h32min"}, {"name": "Jussara Fernandes", "ra": "21:18", "pc": "11:28", "sla": "3h28min"}, {"name": "Jonathan Callai da silva", "ra": "21:07", "pc": "11:27", "sla": "3h27min"}, {"name": "Matusalem Lúcio", "ra": "21:01", "pc": "11:26", "sla": "3h26min"}, {"name": "Jose Luciano Rocha", "ra": "20:28", "pc": "11:24", "sla": "3h24min"}, {"name": "adriana rodrigues", "ra": "22:30", "pc": "11:20", "sla": "3h20min"}, {"name": "Aline Mitre Moreira", "ra": "23:31", "pc": "11:19", "sla": "3h19min"}, {"name": "Ester Medeiros", "ra": "21:43", "pc": "11:19", "sla": "3h19min"}, {"name": "Vilciani Menin", "ra": "22:49", "pc": "11:19", "sla": "3h19min"}, {"name": "Huriel Fogasso", "ra": "21:25", "pc": "11:19", "sla": "3h19min"}, {"name": "Bruna de Oliveira", "ra": "22:59", "pc": "11:19", "sla": "3h19min"}]}, "29933656": {"name": "Leticia Brainer", "n": 54, "n_sla": 46, "n_sem": 8, "med": "2h54min", "med_val": 174.272175, "p75": "6h42min", "pct": "43%", "pct_val": 43.47826086956522, "violacoes": [{"name": "Sandro Debas", "ra": "00:25", "pc": "16:08", "sla": "8h08min"}, {"name": "Letícia junckes", "ra": "14:22", "pc": "11:54", "sla": "7h31min"}, {"name": "Sibely", "ra": "20:25", "pc": "14:59", "sla": "6h59min"}, {"name": "Luciano", "ra": "21:52", "pc": "14:58", "sla": "6h58min"}, {"name": "Marcos ", "ra": "22:14", "pc": "14:56", "sla": "6h56min"}, {"name": "Aline Ribeiro", "ra": "22:37", "pc": "14:56", "sla": "6h56min"}, {"name": "Nathalie Bruzaferro", "ra": "23:43", "pc": "14:54", "sla": "6h54min"}, {"name": "Diogo Figueiredo", "ra": "22:23", "pc": "14:47", "sla": "6h47min"}, {"name": "André luiz", "ra": "22:01", "pc": "14:47", "sla": "6h47min"}, {"name": "Kalebe Gabriel", "ra": "23:53", "pc": "14:45", "sla": "6h45min"}, {"name": "Bruna Barbosa", "ra": "21:23", "pc": "14:45", "sla": "6h45min"}, {"name": "Daniela Viegas", "ra": "23:13", "pc": "14:42", "sla": "6h42min"}]}}}, "2026-08-24": {"label": "Segunda · 24/08", "n_total": 206, "n_active": 200, "sdrs": {"29157433": {"name": "Isabele Moraes", "n": 99, "n_sla": 76, "n_sem": 23, "med": "27min", "med_val": 27.99030833333333, "p75": "2h57min", "pct": "54%", "pct_val": 53.94736842105263, "violacoes": [{"name": "Felipe Otavio tonin de moura", "ra": "19:18", "pc": "10:39", "sla": "12h39min"}, {"name": "Giselle Marques", "ra": "19:18", "pc": "11:39", "sla": "3h39min"}, {"name": "RNascimento ", "ra": "18:53", "pc": "11:39", "sla": "3h39min"}, {"name": "Ana Luiza Andrade Teixeira ", "ra": "19:26", "pc": "11:39", "sla": "3h39min"}, {"name": "Julia Neves Cano", "ra": "19:18", "pc": "11:39", "sla": "3h39min"}, {"name": "Michel Cristhian de Oliveira Bezerra", "ra": "19:22", "pc": "11:39", "sla": "3h39min"}, {"name": "Evellyn dos Reis ", "ra": "19:26", "pc": "11:39", "sla": "3h39min"}, {"name": "Gabriela Pereira Novaes", "ra": "19:24", "pc": "11:39", "sla": "3h39min"}, {"name": "Gustavo augusto De Sales Albornoz", "ra": "19:28", "pc": "11:19", "sla": "3h19min"}, {"name": "LIEGE AVILA", "ra": "22:54", "pc": "10:57", "sla": "2h57min"}, {"name": "Daniel Mesquita", "ra": "20:38", "pc": "10:57", "sla": "2h57min"}, {"name": "Adrielle Van haandel", "ra": "19:49", "pc": "10:57", "sla": "2h57min"}]}, "31947044": {"name": "Tayrinne Fernandes", "n": 47, "n_sla": 41, "n_sem": 6, "med": "30min", "med_val": 30.31475, "p75": "56min", "pct": "49%", "pct_val": 48.78048780487805, "violacoes": [{"name": "Gisella", "ra": "16:29", "pc": "17:42", "sla": "11h12min"}, {"name": "jean meotti", "ra": "02:26", "pc": "09:49", "sla": "1h49min"}, {"name": "Gleice Kelly Rodrigues Rodrigues", "ra": "07:52", "pc": "09:24", "sla": "1h24min"}, {"name": "fabio magalhaes", "ra": "03:31", "pc": "09:24", "sla": "1h24min"}, {"name": "Paulo Fernando Borges Fagundes", "ra": "07:46", "pc": "09:24", "sla": "1h24min"}, {"name": "Romualdo Rodrigues", "ra": "07:53", "pc": "09:20", "sla": "1h20min"}, {"name": "Walter Cecchetto Filho", "ra": "08:13", "pc": "09:24", "sla": "1h10min"}, {"name": "Luana Laurett Groner", "ra": "10:16", "pc": "11:14", "sla": "57min"}, {"name": "Thiago Victor", "ra": "09:52", "pc": "10:50", "sla": "57min"}, {"name": "Laíz Lopes ", "ra": "22:04", "pc": "08:57", "sla": "57min"}, {"name": "CRISTIANO DAMAZIO", "ra": "21:44", "pc": "08:56", "sla": "56min"}, {"name": "Rodrigo Siqueira ", "ra": "21:37", "pc": "08:55", "sla": "55min"}]}, "29933656": {"name": "Leticia Brainer", "n": 54, "n_sla": 42, "n_sem": 12, "med": "1h29min", "med_val": 89.90958333333333, "p75": "2h34min", "pct": "31%", "pct_val": 30.952380952380953, "violacoes": [{"name": "Alan Silva dos Santos", "ra": "17:49", "pc": "18:17", "sla": "10h10min"}, {"name": "Leonardo de Castro Batista", "ra": "18:48", "pc": "12:23", "sla": "4h23min"}, {"name": "Elizabete goncalves ", "ra": "20:31", "pc": "10:49", "sla": "2h49min"}, {"name": "George Rodrigues", "ra": "20:35", "pc": "10:48", "sla": "2h48min"}, {"name": "Lucas Gabriel ", "ra": "21:01", "pc": "10:47", "sla": "2h47min"}, {"name": "Karen Waechter", "ra": "21:43", "pc": "10:45", "sla": "2h45min"}, {"name": "Sthephany Cavalcante da Silva ", "ra": "21:58", "pc": "10:44", "sla": "2h44min"}, {"name": "Cineide Maria Farias", "ra": "22:40", "pc": "10:43", "sla": "2h43min"}, {"name": "Jayanne", "ra": "22:56", "pc": "10:43", "sla": "2h43min"}, {"name": "Bruna Diacira", "ra": "23:10", "pc": "10:42", "sla": "2h42min"}, {"name": "Weliton Ribeiro ", "ra": "00:01", "pc": "10:34", "sla": "2h34min"}, {"name": "Raphael Passarella neto", "ra": "02:21", "pc": "10:20", "sla": "2h20min"}]}}}};
 const ORDER = ['29157433','31947044','29933656'];
 
 function colorPct(v){ return v>=75?'green':v>=50?'amber':'red'; }
@@ -555,27 +565,50 @@ function slaToMin(s){
   let m=0; const h=s.match(/(\d+)h/),mn=s.match(/(\d+)min/);
   if(h)m+=parseInt(h[1])*60; if(mn)m+=parseInt(mn[1]); return m;
 }
-function slaClass(s){const m=slaToMin(s);return m>=300?'sla-crit':m>30?'sla-warn':'';}
+function slaClass(s){const m=slaToMin(s);return m>=300?'sla-crit':m>30?'sla-warn':''}
 
 function renderDay(dateKey){
   const day = DATA[dateKey];
   if(!day)return;
+  const n_active = day.n_active;
+  const n_total = day.n_total;
+  const off_pct = day.off_pct||null;
+  const n_off = day.n_off||null;
+
   document.getElementById('run-info-label').textContent =
-    `n=${day.n_active} leads com SDR ativo atribuído · pipeline total ${day.n_total} · horário BRT`;
-  document.getElementById('sla-day-label').textContent = `Desempenho por SDR Manager · ${day.label}`;
-  document.getElementById('vio-title').textContent = `Maiores violações de SLA (>30min úteis) · ${day.label}`;
+    n_active + ' leads em horário comercial (08h–18h) · total do dia ' + n_total + ' · horário BRT';
+  document.getElementById('sla-day-label').textContent = 'Desempenho por SDR Manager · ' + day.label;
+  document.getElementById('vio-title').textContent = 'Maiores violações de SLA (>30min úteis) · ' + day.label;
+
+  // Off-hours banner
+  const banner = document.getElementById('off-hours-alert');
+  if(off_pct && n_off){
+    const pctNum = parseFloat(off_pct);
+    const cls = pctNum >= 40 ? 'warn' : 'ok';
+    banner.innerHTML = `<div class="off-hours-banner ${cls}">
+      <span class="off-icon">🌙</span>
+      <div>
+        <span class="off-pct-val">${off_pct}</span>
+        <strong>dos leads chegaram fora do horário comercial</strong> (${n_off} de ${n_total} leads) — excluídos da análise de SLA.
+        Esses leads entram na fila de abertura do próximo dia útil às 10h.
+      </div>
+    </div>`;
+  } else {
+    banner.innerHTML = '';
+  }
 
   // SDR cards
   const grid = document.getElementById('sdr-grid-area');
   grid.innerHTML = ORDER.map(wid=>{
     const s=day.sdrs[wid];
+    if(!s) return '';
     const pctCol=colorPct(s.pct_val);
     const medCol=colorMed(s.med_val);
     const p75Col=colorP75(slaToMin(s.p75));
     return `<div class="sdr-card">
       <div class="sdr-card-header">
         <div class="sdr-name">${s.name}</div>
-        <div class="sdr-n">${s.n} leads</div>
+        <div class="sdr-n">${s.n} leads comerciais</div>
       </div>
       <div class="kpi-grid">
         <div class="kpi-item"><div class="kpi-label">Mediana SLA</div><div class="kpi-value ${medCol}">${s.med}</div><div class="kpi-sub">tempo útil</div></div>
@@ -589,6 +622,7 @@ function renderDay(dateKey){
   // Violations table
   const rows=[];
   ORDER.forEach(wid=>{
+    if(!day.sdrs[wid]) return;
     day.sdrs[wid].violacoes.forEach(v=>rows.push({sdr:day.sdrs[wid].name,...v}));
   });
   rows.sort((a,b)=>slaToMin(b.sla)-slaToMin(a.sla));
@@ -612,8 +646,9 @@ function showTab(id,btn){
   btn.classList.add('active');
 }
 
-// Init
-renderDay('2026-08-25');
+// Init — show most recent date
+renderDay('2026-08-26');
+
 </script>
 </body>
 </html>
