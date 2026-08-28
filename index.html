@@ -73,11 +73,18 @@ body{font-family:'Inter',-apple-system,sans-serif;background:var(--bg);color:var
 .sla-rule span{color:var(--accent);font-weight:600;font-size:13px}
 
 /* OFF-HOURS ALERT BANNER */
-.off-hours-banner{display:flex;align-items:center;gap:12px;border-radius:6px;padding:10px 16px;margin-bottom:20px;font-size:12px}
+.off-hours-banner{display:flex;align-items:center;gap:12px;border-radius:6px;padding:10px 16px;margin-bottom:16px;font-size:12px}
 .off-hours-banner.warn{background:var(--warn-light);border:1px solid var(--amber-bd);color:var(--amber)}
 .off-hours-banner.ok{background:var(--success-light);border:1px solid var(--green-bd);color:var(--green)}
 .off-icon{font-size:18px;flex-shrink:0}
 .off-pct-val{font-size:20px;font-weight:700;font-family:'JetBrains Mono',monospace;margin-right:4px}
+
+/* SUMMARY STRIP */
+.summary-strip{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:20px}
+.sum-card{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:14px 18px}
+.sum-label{font-size:10px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;color:var(--text-3);margin-bottom:4px}
+.sum-value{font-family:'JetBrains Mono',monospace;font-size:26px;font-weight:700;color:var(--text);line-height:1.1}
+.sum-sub{font-size:11px;color:var(--text-3);margin-top:3px}
 
 /* SDR CARDS */
 .sdr-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:24px}
@@ -106,7 +113,7 @@ body{font-family:'Inter',-apple-system,sans-serif;background:var(--bg);color:var
 .td-time{font-family:'JetBrains Mono',monospace;font-size:12px}
 .td-sdr{font-weight:600;color:var(--text);white-space:nowrap}
 .td-sla{font-weight:700;font-family:'JetBrains Mono',monospace;font-size:12px;font-variant-numeric:tabular-nums}
-.sla-crit{color:var(--red)}.sla-warn{color:var(--amber)}
+.sla-crit{color:var(--red)}.sla-warn{color:var(--amber)}.sla-nocontact{color:var(--text-3)}
 
 /* SECTION TITLE */
 .sec-title{font-size:10.5px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--text-3);margin-bottom:12px;padding-top:14px;border-top:1px solid var(--border)}
@@ -171,7 +178,7 @@ body{font-family:'Inter',-apple-system,sans-serif;background:var(--bg);color:var
 .vel-note{font-size:12px;color:var(--text-3);line-height:1.5}
 
 @media(max-width:800px){
-  .sdr-grid,.kpi-strip,.insight-row,.vel-compare{grid-template-columns:1fr}
+  .sdr-grid,.kpi-strip,.insight-row,.vel-compare,.summary-strip{grid-template-columns:1fr}
   .hdr-top{flex-direction:column}
   .hdr-right{align-items:flex-start}
   .body{padding:16px}
@@ -218,10 +225,12 @@ body{font-family:'Inter',-apple-system,sans-serif;background:var(--bg);color:var
   </div>
 
   <div class="sla-rule">
-    <span>Meta: ≤ 30min</span> em horário comercial (Seg–Sex 08h–18h BRT) · RA → MIN(Taken to Work, Contact Established) · <strong>P75</strong> = 75% dos leads foram atendidos dentro desse tempo (1 em cada 4 leva mais)
+    <span>Meta: ≤ 30min</span> em horário comercial (Seg–Sex 08h–18h BRT) · RA → MIN(Taken to Work, Contact Established) · <strong>P75</strong> = 75% dos leads foram atendidos dentro desse tempo · duplicados removidos (lead aberto preservado)
   </div>
 
   <div id="off-hours-alert"></div>
+
+  <div class="summary-strip" id="summary-strip"></div>
 
   <div class="sec-title first" id="sla-day-label">Desempenho por SDR Manager</div>
   <div class="sdr-grid" id="sdr-grid-area"></div>
@@ -312,8 +321,8 @@ body{font-family:'Inter',-apple-system,sans-serif;background:var(--bg);color:var
     </table>
   </div>
 
-  <div class="sec-title">SLA por Horário de Entrada · Dias Úteis · Todos os horários</div>
-  <div class="method-note" style="margin-bottom:12px">Como o SLA muda conforme o horário em que o lead é atribuído (RA). Leads que entram após as 18h ou antes das 08h são atendidos no próximo dia útil — daí o SLA elevado fora do horário comercial. O time inicia majoritariamente às 10h.</div>
+  <div class="sec-title">SLA por Horário de Entrada · Dias Úteis</div>
+  <div class="method-note" style="margin-bottom:12px">Como o SLA muda conforme o horário em que o lead é atribuído (RA). Leads que entram após as 18h ou antes das 08h são atendidos no próximo dia útil. O time inicia majoritariamente às 10h.</div>
   <div class="bucket-section">
     <table class="btable">
       <thead><tr>
@@ -324,7 +333,7 @@ body{font-family:'Inter',-apple-system,sans-serif;background:var(--bg);color:var
         <th style="width:60px">Janela</th>
       </tr></thead>
       <tbody>
-        <tr style="background:rgba(100,116,139,.06)"><td colspan="5" style="font-size:11px;color:var(--text-3);padding:6px 12px;font-weight:600">— Antes do horário comercial —</td></tr>
+        <tr style="background:rgba(100,116,139,.06)"><td colspan="5" style="font-size:11px;color:var(--text-3);padding:6px 12px;font-weight:600">— Início do horário comercial —</td></tr>
         <tr><td style="color:var(--text-2)">08h</td><td style="text-align:right">302</td><td><div class="bar-wrap"><div class="bar-bg"><div class="bar-fill" style="width:34%;background:#F59E0B"></div></div><div class="bar-val" style="color:var(--warn)">34%</div></div></td><td style="color:var(--warn)">1h13min</td><td style="font-size:11px;color:var(--text-3)">comercial</td></tr>
         <tr><td style="color:var(--text-2)">09h</td><td style="text-align:right">371</td><td><div class="bar-wrap"><div class="bar-bg"><div class="bar-fill" style="width:44%;background:#F59E0B"></div></div><div class="bar-val" style="color:var(--warn)">44%</div></div></td><td style="color:var(--warn)">27min</td><td style="font-size:11px;color:var(--text-3)">comercial</td></tr>
         <tr style="background:rgba(100,116,139,.06)"><td colspan="5" style="font-size:11px;color:var(--text-3);padding:6px 12px;font-weight:600">— Horário comercial (time majoritariamente ativo) —</td></tr>
@@ -346,7 +355,7 @@ body{font-family:'Inter',-apple-system,sans-serif;background:var(--bg);color:var
       </tbody>
     </table>
   </div>
-  <div class="method-note" style="margin-bottom:20px">* 18h: leads que chegam no fim do expediente ainda são atendidos imediatamente por parte do time. A mediana "0min" reflete leads atendidos segundos após a atribuição. A partir de 19h o padrão muda: o time já encerrou e o atendimento ocorre na manhã seguinte, explicando o SLA elevado medido em horário comercial.</div>
+  <div class="method-note" style="margin-bottom:20px">* 18h: leads que chegam no fim do expediente ainda são atendidos imediatamente por parte do time. A partir de 19h o padrão muda: o time já encerrou e o atendimento ocorre na manhã seguinte, explicando o SLA elevado.</div>
 
   <div class="vel-compare">
     <div class="vel-box">
@@ -406,7 +415,7 @@ body{font-family:'Inter',-apple-system,sans-serif;background:var(--bg);color:var
   <div class="insight-row">
     <div class="insight-box ib-good">
       <div class="ib-title">★ Tayrinne lidera em velocidade</div>
-      <div class="ib-text">Mediana de 12min e 61% dos leads atendidos em ≤30min. Com 2.754 leads em dias úteis, é a SDR com maior volume e melhor SLA — combinação rara e que merece reconhecimento.</div>
+      <div class="ib-text">Mediana de 12min e 61% dos leads atendidos em ≤30min. Com 2.754 leads em dias úteis, é a SDR com maior volume e melhor SLA — combinação rara que merece reconhecimento.</div>
     </div>
     <div class="insight-box ib-warn">
       <div class="ib-title">⚠ Leticia: 46% dentro da meta</div>
@@ -414,15 +423,12 @@ body{font-family:'Inter',-apple-system,sans-serif;background:var(--bg);color:var
     </div>
     <div class="insight-box ib-good">
       <div class="ib-title">📊 O timing importa mais que o volume</div>
-      <div class="ib-text">Leads que chegam entre 10h–17h têm 71–81% atendidos em ≤30min. Os mesmos leads às 08h chegam a apenas 34%. Não é a SDR, é o horário de entrada. Considerar priorização por janela horária.</div>
+      <div class="ib-text">Leads que chegam entre 10h–17h têm 71–81% atendidos em ≤30min. Os mesmos leads às 08h chegam a apenas 34%. Não é a SDR, é o horário de entrada.</div>
     </div>
   </div>
 
-  <div class="method-note"><strong>Base:</strong> 8.087 deals · pipeline Brazil/Sales (110797558) · Jul 1 – Ago 25, 2026 · 3 SDR Managers ativas. Análise de dias úteis (n=6.353). Primeiro contato = MIN(enter_date___taken_to_work, enter_date___contact_established) · SLA em minutos de horário comercial (Seg–Sex 8h–18h BRT). Dados direto do HubSpot CRM sem interpolação.</div>
-
-  <!-- FUNIL: VELOCIDADE × CONVERSÃO -->
   <div class="sec-title" style="margin-top:28px">Velocidade de Atendimento × Resultado Comercial · n=6.353 leads em dias úteis</div>
-  <div class="method-note" style="margin-bottom:12px">Cruzamento entre SLA do primeiro contato e progressão no funil. Cada lead é classificado pela velocidade com que foi atendido e rastreado até reunião, show-up e venda. <strong>Dados extraídos diretamente do HubSpot — sem interpolação.</strong></div>
+  <div class="method-note" style="margin-bottom:12px">Cruzamento entre SLA do primeiro contato e progressão no funil. <strong>Dados extraídos diretamente do HubSpot — sem interpolação.</strong></div>
 
   <div class="bucket-section">
     <table class="btable">
@@ -491,7 +497,7 @@ body{font-family:'Inter',-apple-system,sans-serif;background:var(--bg);color:var
   <div class="insight-row" style="margin-bottom:20px">
     <div class="insight-box ib-bad" style="flex:1.5">
       <div class="ib-title">🔴 4,7× mais vendas com atendimento rápido</div>
-      <div class="ib-text">Leads atendidos em <strong>≤30min têm taxa de venda de 1,4%</strong> contra apenas <strong>0,3% para leads atendidos em 2–4h</strong> — uma diferença de 4,7×. O show-up também cai 40% (4,8% → 2,9%). O dado é claro: cada hora de atraso no primeiro contato reduz significativamente as chances de fechar negócio.</div>
+      <div class="ib-text">Leads atendidos em <strong>≤30min têm taxa de venda de 1,4%</strong> contra apenas <strong>0,3% para leads atendidos em 2–4h</strong> — uma diferença de 4,7×. O show-up também cai 40% (4,8% → 2,9%). Cada hora de atraso no primeiro contato reduz significativamente as chances de fechar negócio.</div>
     </div>
     <div class="insight-box ib-good" style="flex:1">
       <div class="ib-title">📈 Funil geral Jul–Ago 2026</div>
@@ -506,49 +512,30 @@ body{font-family:'Inter',-apple-system,sans-serif;background:var(--bg);color:var
     </div>
   </div>
 
-  <div class="method-note" style="margin-bottom:28px">* Leads sem contato registrado (n=972) e bucket &gt;8h (n=50) apresentam taxas de reunião elevadas por viés de seleção: parte desses deals avançou para Meeting Scheduled via canal alternativo (webinar, agendamento direto) sem passar pela etapa de primeiro contato no CRM. Excluídos da comparação principal por não refletirem o fluxo convencional de SDR.</div>
+  <div class="method-note" style="margin-bottom:28px">* Leads sem contato registrado (n=972) e bucket &gt;8h (n=50) apresentam taxas de reunião elevadas por viés de seleção: parte desses deals avançou via canal alternativo sem passar pela etapa de primeiro contato no CRM.</div>
 
-  <!-- RECOMENDAÇÕES PRÁTICAS -->
   <div class="sec-title">Recomendações Práticas para o Processo Comercial</div>
-
   <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:20px">
-
     <div style="background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:18px;border-left:4px solid #34D399">
       <div style="font-size:12px;font-weight:700;color:var(--success);text-transform:uppercase;letter-spacing:.05em;margin-bottom:8px">🟢 Ação Imediata · Alta Prioridade</div>
       <div style="font-size:13px;font-weight:700;color:var(--text);margin-bottom:6px">Protocolo de abertura de dia para leads noturnos</div>
-      <div style="font-size:12px;color:var(--text-2);line-height:1.6">1.501 leads chegam entre 19h–23h em dias úteis (24% do volume). Esses leads esperam até a manhã seguinte — SLA real de 1h13min a 1h40min. Criar ritual de 10 minutos às <strong>10h</strong> para priorizar esses leads garante que entrem no fluxo rápido já no início do dia.</div>
+      <div style="font-size:12px;color:var(--text-2);line-height:1.6">1.501 leads chegam entre 19h–23h em dias úteis (24% do volume). Criar ritual de 10 minutos às <strong>10h</strong> para priorizar esses leads garante que entrem no fluxo rápido já no início do dia.</div>
     </div>
-
     <div style="background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:18px;border-left:4px solid #34D399">
       <div style="font-size:12px;font-weight:700;color:var(--success);text-transform:uppercase;letter-spacing:.05em;margin-bottom:8px">🟢 Ação Imediata · Alta Prioridade</div>
       <div style="font-size:13px;font-weight:700;color:var(--text);margin-bottom:6px">Proteger a janela 10h–17h</div>
-      <div style="font-size:12px;color:var(--text-2);line-height:1.6">Leads que chegam entre 10h–17h têm <strong>71–81% atendidos em ≤30min</strong> — o melhor desempenho do time. Evitar reuniões internas e tarefas administrativas nessa janela. É o horário comercial mais valioso do pipeline.</div>
+      <div style="font-size:12px;color:var(--text-2);line-height:1.6">Leads que chegam entre 10h–17h têm <strong>71–81% atendidos em ≤30min</strong>. Evitar reuniões internas e tarefas administrativas nessa janela. É o horário comercial mais valioso do pipeline.</div>
     </div>
-
     <div style="background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:18px;border-left:4px solid #F59E0B">
       <div style="font-size:12px;font-weight:700;color:var(--warn);text-transform:uppercase;letter-spacing:.05em;margin-bottom:8px">🟡 Curto Prazo · Processo</div>
       <div style="font-size:13px;font-weight:700;color:var(--text);margin-bottom:6px">SLA de 08h–09h: investigar cobertura no início do expediente</div>
-      <div style="font-size:12px;color:var(--text-2);line-height:1.6">Leads que chegam às 08h têm apenas <strong>34% atendidos em ≤30min</strong> — pior que qualquer outra hora comercial. Como o time começa às 10h, esses leads ficam 1h–2h parados. Avaliar se cobertura escalonada (um SDR por dia iniciando às 8h30) tem ROI positivo dada a taxa de conversão.</div>
+      <div style="font-size:12px;color:var(--text-2);line-height:1.6">Leads que chegam às 08h têm apenas <strong>34% atendidos em ≤30min</strong>. Avaliar se cobertura escalonada (um SDR iniciando às 8h30) tem ROI positivo dada a taxa de conversão.</div>
     </div>
-
-    <div style="background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:18px;border-left:4px solid #F59E0B">
-      <div style="font-size:12px;font-weight:700;color:var(--warn);text-transform:uppercase;letter-spacing:.05em;margin-bottom:8px">🟡 Curto Prazo · Individual</div>
-      <div style="font-size:13px;font-weight:700;color:var(--text);margin-bottom:6px">Leticia: investigar gargalo de SLA sem perder qualidade</div>
-      <div style="font-size:12px;color:var(--text-2);line-height:1.6">Leticia tem a <strong>melhor taxa de reunião (18,9%)</strong> e show-up (5,2%) do time — sua abordagem funciona. O problema é o SLA: <strong>21min de mediana</strong> vs 12min de Tayrinne. Entender se é gargalo de carteira, volume mal distribuído ou processo de abertura. Corrigir SLA mantendo a qualidade = maior impacto possível.</div>
-    </div>
-
     <div style="background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:18px;border-left:4px solid #6366F1">
       <div style="font-size:12px;font-weight:700;color:#6366F1;text-transform:uppercase;letter-spacing:.05em;margin-bottom:8px">🔵 Médio Prazo · Processo</div>
       <div style="font-size:13px;font-weight:700;color:var(--text);margin-bottom:6px">Melhorar taxa Reunião → Show-up (28,5%)</div>
-      <div style="font-size:12px;color:var(--text-2);line-height:1.6">De cada 1.113 reuniões agendadas, apenas <strong>317 comparecem (28,5%)</strong>. A taxa Show-up→Venda é boa (26,2%), então o gargalo está no no-show. Implementar <strong>sequência de confirmação de 3 pontos</strong> (confirmação imediata + 24h antes + 1h antes) pode elevar o show-up sem custo adicional de novos leads.</div>
+      <div style="font-size:12px;color:var(--text-2);line-height:1.6">De cada 1.113 reuniões agendadas, apenas <strong>317 comparecem (28,5%)</strong>. Implementar <strong>sequência de confirmação de 3 pontos</strong> (imediata + 24h antes + 1h antes) pode elevar o show-up sem custo adicional.</div>
     </div>
-
-    <div style="background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:18px;border-left:4px solid #6366F1">
-      <div style="font-size:12px;font-weight:700;color:#6366F1;text-transform:uppercase;letter-spacing:.05em;margin-bottom:8px">🔵 Médio Prazo · Estratégia</div>
-      <div style="font-size:13px;font-weight:700;color:var(--text);margin-bottom:6px">Simular impacto de elevar SLA médio para ≤30min</div>
-      <div style="font-size:12px;color:var(--text-2);line-height:1.6">Hoje <strong>46,1% dos leads em dias úteis (2.930)</strong> são atendidos acima de 30min. Se esses leads tivessem a mesma taxa de venda do bucket ≤30min (1,4%), o ganho potencial seria de <strong>+41 vendas adicionais no período</strong> — apenas acelerando o primeiro contato, sem mudar volume ou discurso.</div>
-    </div>
-
   </div>
 
 </div><!-- /panel-analysis -->
@@ -559,57 +546,119 @@ body{font-family:'Inter',-apple-system,sans-serif;background:var(--bg);color:var
 const DATA = {
   "2026-08-27": {
     label: "Quinta · 27/08",
-    n_total: 257,
-    n_active: 148,
-    n_off: 108,
-    off_pct: "42.2%",
+    n_total: 246,
+    n_active: 145,
+    n_off: 101,
+    off_pct: "41,1%",
     sdrs: {
-      "29157433":{name:"Isabele Moraes",n:56,n_sla:41,n_sem:15,med:"28min",med_val:28.2,p75:"1h17min",pct:"38%",pct_val:37.5,violacoes:[{name:"John Levi",ra:"17:19",pc:"—",sla:"Sem contato"},{name:"Lucas Rodrigues",ra:"17:18",pc:"—",sla:"Sem contato"},{name:"Igor Jobim",ra:"17:05",pc:"—",sla:"Sem contato"},{name:"Brenda Ferreira",ra:"14:08",pc:"—",sla:"Sem contato"},{name:"Tatiane",ra:"13:15",pc:"—",sla:"Sem contato"},{name:"Saleandro Mendes ",ra:"12:45",pc:"—",sla:"Sem contato"},{name:"Brendo da Silva ",ra:"12:31",pc:"—",sla:"Sem contato"},{name:"teste",ra:"12:20",pc:"—",sla:"Sem contato"},{name:"Edilson Goularte",ra:"12:16",pc:"—",sla:"Sem contato"},{name:"stefany",ra:"12:12",pc:"—",sla:"Sem contato"},{name:"Stauane Fernandes ",ra:"11:54",pc:"—",sla:"Sem contato"},{name:"Franciele Rauber",ra:"11:32",pc:"—",sla:"Sem contato"}]}
-,      "31947044":{name:"Tayrinne Fernandes",n:52,n_sla:36,n_sem:16,med:"10min",med_val:9.6,p75:"25min",pct:"56%",pct_val:55.8,violacoes:[{name:"Joyce",ra:"17:31",pc:"—",sla:"Sem contato"},{name:"Alana Silva",ra:"17:17",pc:"—",sla:"Sem contato"},{name:"Ygor bueno",ra:"17:12",pc:"—",sla:"Sem contato"},{name:"Pedro",ra:"15:45",pc:"—",sla:"Sem contato"},{name:"Anderson Batista",ra:"15:01",pc:"—",sla:"Sem contato"},{name:"Jailson",ra:"14:36",pc:"—",sla:"Sem contato"},{name:"Renan Oliveira ",ra:"12:54",pc:"—",sla:"Sem contato"},{name:"Gabriel Garfinho de Almeida ",ra:"12:53",pc:"—",sla:"Sem contato"},{name:"Felipe Leonardo Evangelista Ribeiro ",ra:"12:46",pc:"—",sla:"Sem contato"},{name:"Alexander Alex",ra:"12:09",pc:"—",sla:"Sem contato"},{name:"Ciro Bueno",ra:"12:02",pc:"—",sla:"Sem contato"},{name:"Stauane Fernandes ",ra:"11:51",pc:"—",sla:"Sem contato"}]}
-,      "29933656":{name:"Leticia Brainer",n:40,n_sla:29,n_sem:11,med:"52min",med_val:51.7,p75:"1h25min",pct:"20%",pct_val:20.0,violacoes:[{name:"Vinicius Borges",ra:"14:42",pc:"—",sla:"Sem contato"},{name:"Julio César",ra:"14:27",pc:"—",sla:"Sem contato"},{name:"Omoto Carlos Alberto",ra:"13:53",pc:"—",sla:"Sem contato"},{name:"wendrews melo da silva ",ra:"13:45",pc:"—",sla:"Sem contato"},{name:"Yhuri alves",ra:"13:10",pc:"—",sla:"Sem contato"},{name:"Lucas Medeiros",ra:"13:03",pc:"—",sla:"Sem contato"},{name:"Dayanne Cecilia",ra:"12:47",pc:"—",sla:"Sem contato"},{name:"Thiago Leandro ",ra:"12:41",pc:"—",sla:"Sem contato"},{name:"Francisco José da Costa Guimarães",ra:"12:01",pc:"—",sla:"Sem contato"},{name:"Hemerson carvalho",ra:"11:37",pc:"—",sla:"Sem contato"},{name:"Paulo César Barbosa Dantas ",ra:"11:33",pc:"—",sla:"Sem contato"},{name:"Karin Alonso",ra:"08:07",pc:"11:50",sla:"3h43min"}]}
+      "29157433":{name:"Isabele Moraes",n:55,n_sla:41,n_sem:14,med:"28min",med_val:28.2,p75:"1h17min",p75_val:77.4,pct:"38%",pct_val:38.2,violacoes:[
+        {name:"Isabella Rodrigues",ra:"08:43",pc:"11:44",sla:"3h"},
+        {name:"Matheus",ra:"08:56",pc:"11:44",sla:"2h48min"},
+        {name:"Vithor Souza Rezende",ra:"09:08",pc:"11:44",sla:"2h36min"},
+        {name:"Sabrina Dos santos",ra:"13:06",pc:"15:28",sla:"2h22min"},
+        {name:"Caroline Protazio",ra:"09:35",pc:"11:44",sla:"2h09min"},
+        {name:"Ricardo Fonseca",ra:"09:39",pc:"11:24",sla:"1h44min"},
+        {name:"Roberto Cardoso",ra:"16:00",pc:"17:41",sla:"1h41min"},
+        {name:"Ruana Natasha dos Santos",ra:"09:45",pc:"11:24",sla:"1h39min"},
+        {name:"Valquiria da Silva Carlos",ra:"09:52",pc:"11:24",sla:"1h32min"},
+        {name:"Alexandra da Silva Palitos",ra:"09:59",pc:"11:24",sla:"1h25min"},
+        {name:"Gregory Mota",ra:"13:56",pc:"15:14",sla:"1h17min"},
+        {name:"larissa machado",ra:"14:00",pc:"15:14",sla:"1h13min"}
+      ]},
+      "31947044":{name:"Tayrinne Fernandes",n:50,n_sla:34,n_sem:16,med:"11min",med_val:11.0,p75:"25min",p75_val:24.7,pct:"54%",pct_val:54.0,violacoes:[
+        {name:"Marcelo Gomes",ra:"11:26",pc:"28/08 09:30",sla:"8h04min"},
+        {name:"Tiago Velozo",ra:"13:11",pc:"28/08 07:23",sla:"4h48min"},
+        {name:"Celio Alvino",ra:"16:38",pc:"28/08 08:53",sla:"2h15min"},
+        {name:"Eduardo Geraldini",ra:"13:06",pc:"14:04",sla:"59min"},
+        {name:"Joao Tadeu",ra:"09:51",pc:"10:44",sla:"53min"},
+        {name:"Gustavo de Oliveira P. Cunha",ra:"13:16",pc:"14:05",sla:"49min"},
+        {name:"Tatiane Aline Costa",ra:"08:37",pc:"09:20",sla:"43min"},
+        {name:"Glaydson",ra:"10:05",pc:"—",sla:"Sem contato"},
+        {name:"Cassio junio pereira da silva",ra:"11:35",pc:"—",sla:"Sem contato"},
+        {name:"Kiara Seixas",ra:"11:37",pc:"—",sla:"Sem contato"},
+        {name:"Israel Santos",ra:"11:43",pc:"—",sla:"Sem contato"},
+        {name:"Stauane Fernandes",ra:"11:51",pc:"—",sla:"Sem contato"}
+      ]},
+      "29933656":{name:"Leticia Brainer",n:40,n_sla:29,n_sem:11,med:"52min",med_val:51.7,p75:"1h25min",p75_val:84.7,pct:"20%",pct_val:20.0,violacoes:[
+        {name:"Karin Alonso",ra:"08:07",pc:"11:50",sla:"3h43min"},
+        {name:"Fernanda Dias Stinguel",ra:"11:49",pc:"14:54",sla:"3h05min"},
+        {name:"Fabio Fernandes",ra:"08:50",pc:"11:16",sla:"2h27min"},
+        {name:"Liamara Graczk",ra:"11:54",pc:"13:43",sla:"1h49min"},
+        {name:"Ronielson biserra",ra:"09:31",pc:"11:09",sla:"1h37min"},
+        {name:"Mila Oliveira Correa",ra:"12:13",pc:"13:43",sla:"1h30min"},
+        {name:"Grasielle Leme Pinheiro",ra:"12:17",pc:"13:43",sla:"1h26min"},
+        {name:"Luís Flávio de Moraes Costa",ra:"12:18",pc:"13:43",sla:"1h25min"},
+        {name:"Arnaldo Nemitz",ra:"09:35",pc:"10:57",sla:"1h21min"},
+        {name:"Fernanda Silveira",ra:"12:25",pc:"13:43",sla:"1h18min"},
+        {name:"Eliene Batista",ra:"09:40",pc:"10:56",sla:"1h16min"},
+        {name:"Eurico Alexandre Braga Junior",ra:"09:49",pc:"10:56",sla:"1h07min"}
+      ]}
     }
   },
-"2026-08-26": {"label": "Quarta · 26/08", "n_total": 382, "n_active": 198, "n_off": 184, "off_pct": "48.2%", "sdrs": {"29157433": {"name": "Isabele Moraes", "n": 69, "n_sla": 48, "n_sem": 21, "med": "40min", "med_val": 39.85, "p75": "1h38min", "pct": "38%", "pct_val": 37.5, "violacoes": [{"name": "Daniel Ribeiro Reis", "ra": "08:09", "pc": "11:40", "sla": "3h30min"}, {"name": "Paulo Roberto", "ra": "08:11", "pc": "11:40", "sla": "3h28min"}, {"name": "Ricardo Antonio", "ra": "08:16", "pc": "11:21", "sla": "3h05min"}, {"name": "Gabriel Mendes Souza", "ra": "08:27", "pc": "11:21", "sla": "2h54min"}, {"name": "Kátia Mayara", "ra": "08:44", "pc": "11:21", "sla": "2h37min"}, {"name": "Renato Lucio de Oliveira Martins", "ra": "08:55", "pc": "11:21", "sla": "2h26min"}, {"name": "Nathan barbosa", "ra": "09:06", "pc": "11:21", "sla": "2h15min"}, {"name": "Matheus Frota", "ra": "09:13", "pc": "11:21", "sla": "2h08min"}, {"name": "Vivian Mello", "ra": "12:39", "pc": "14:46", "sla": "2h07min"}, {"name": "Ellen Felícia Ferreira Miranda", "ra": "09:30", "pc": "11:21", "sla": "1h51min"}, {"name": "Aline Bernardes", "ra": "09:37", "pc": "11:21", "sla": "1h44min"}, {"name": "giselle Hilario", "ra": "15:20", "pc": "16:58", "sla": "1h38min"}]}, "31947044": {"name": "Tayrinne Fernandes", "n": 63, "n_sla": 38, "n_sem": 25, "med": "12min", "med_val": 12.25, "p75": "28min", "pct": "76%", "pct_val": 76.3, "violacoes": [{"name": "Igor de Oliveira", "ra": "08:36", "pc": "09:38", "sla": "1h02min"}, {"name": "Léia Boechat", "ra": "09:55", "pc": "10:53", "sla": "58min"}, {"name": "Renan Vasconcellos", "ra": "08:41", "pc": "09:38", "sla": "57min"}, {"name": "Carla Lessa", "ra": "09:58", "pc": "10:53", "sla": "55min"}, {"name": "Ade Oliveira", "ra": "10:03", "pc": "10:53", "sla": "50min"}, {"name": "Ravini Villas Boas", "ra": "13:04", "pc": "13:52", "sla": "48min"}, {"name": "Lidiane Giori da Silva", "ra": "08:55", "pc": "09:38", "sla": "44min"}, {"name": "Fernando", "ra": "09:00", "pc": "09:38", "sla": "39min"}, {"name": "Suellen Rocha", "ra": "09:26", "pc": "09:57", "sla": "31min"}]}, "29933656": {"name": "Leticia Brainer", "n": 66, "n_sla": 52, "n_sem": 14, "med": "39min", "med_val": 39.09, "p75": "1h25min", "pct": "38%", "pct_val": 38.5, "violacoes": [{"name": "Lucas carvalho", "ra": "11:48", "pc": "16:28", "sla": "4h39min"}, {"name": "Rhuan Matheus", "ra": "08:05", "pc": "11:44", "sla": "3h38min"}, {"name": "Miriã Michelle", "ra": "08:08", "pc": "11:44", "sla": "3h35min"}, {"name": "Rodrigo Melo", "ra": "08:11", "pc": "11:41", "sla": "3h31min"}, {"name": "Jefferson Diogo", "ra": "14:29", "pc": "18:16", "sla": "3h30min"}, {"name": "Carol Marques", "ra": "08:20", "pc": "11:40", "sla": "3h21min"}, {"name": "Glaucia Araujo", "ra": "08:29", "pc": "11:26", "sla": "2h57min"}, {"name": "Rafael Lima", "ra": "09:02", "pc": "11:19", "sla": "2h17min"}, {"name": "Mirian Portela", "ra": "09:11", "pc": "11:14", "sla": "2h04min"}, {"name": "Zito Campos", "ra": "10:48", "pc": "12:51", "sla": "2h03min"}, {"name": "Bianca Moreira", "ra": "09:16", "pc": "11:14", "sla": "1h58min"}, {"name": "Priscilla Braga", "ra": "09:33", "pc": "11:01", "sla": "1h28min"}]}}}, "2026-08-25": {"label": "Terça · 25/08", "n_total": 193, "n_active": 193, "sdrs": {"29157433": {"name": "Isabele Moraes", "n": 58, "n_sla": 46, "n_sem": 12, "med": "2h32min", "med_val": 152.63474166666668, "p75": "6h30min", "pct": "35%", "pct_val": 34.78260869565217, "violacoes": [{"name": "Cristiane Lopes", "ra": "19:50", "pc": "14:53", "sla": "6h53min"}, {"name": "Rafael Gomes", "ra": "19:13", "pc": "14:51", "sla": "6h51min"}, {"name": "Ana Carolina Oliveira", "ra": "20:23", "pc": "14:51", "sla": "6h51min"}, {"name": "Tamires Krause", "ra": "19:21", "pc": "14:51", "sla": "6h51min"}, {"name": "Marcos Leonardo Paixão da Silva", "ra": "19:20", "pc": "14:51", "sla": "6h51min"}, {"name": "Diego Teixeira", "ra": "19:21", "pc": "14:51", "sla": "6h51min"}, {"name": "Paulo Henrique Aragão ", "ra": "21:16", "pc": "14:30", "sla": "6h30min"}, {"name": "Camila Nonis ", "ra": "21:10", "pc": "14:30", "sla": "6h30min"}, {"name": "Lucas Alves", "ra": "20:27", "pc": "14:30", "sla": "6h30min"}, {"name": "Rodrigo Maurício Corrêa", "ra": "21:45", "pc": "14:30", "sla": "6h30min"}, {"name": "CARLOS HENRIQUE DA ROCHA WEISS", "ra": "21:28", "pc": "14:30", "sla": "6h30min"}, {"name": "BEATRIZ APARECIDA DA SILVA", "ra": "20:54", "pc": "14:30", "sla": "6h30min"}]}, "31947044": {"name": "Tayrinne Fernandes", "n": 81, "n_sla": 65, "n_sem": 16, "med": "29min", "med_val": 29.251016666666665, "p75": "1h02min", "pct": "52%", "pct_val": 52.307692307692314, "violacoes": [{"name": "Adriana Annoni", "ra": "11:41", "pc": "16:25", "sla": "4h43min"}, {"name": "Alana Munhoz", "ra": "21:21", "pc": "11:32", "sla": "3h32min"}, {"name": "Jussara Fernandes", "ra": "21:18", "pc": "11:28", "sla": "3h28min"}, {"name": "Jonathan Callai da silva", "ra": "21:07", "pc": "11:27", "sla": "3h27min"}, {"name": "Matusalem Lúcio", "ra": "21:01", "pc": "11:26", "sla": "3h26min"}, {"name": "Jose Luciano Rocha", "ra": "20:28", "pc": "11:24", "sla": "3h24min"}, {"name": "adriana rodrigues", "ra": "22:30", "pc": "11:20", "sla": "3h20min"}, {"name": "Aline Mitre Moreira", "ra": "23:31", "pc": "11:19", "sla": "3h19min"}, {"name": "Ester Medeiros", "ra": "21:43", "pc": "11:19", "sla": "3h19min"}, {"name": "Vilciani Menin", "ra": "22:49", "pc": "11:19", "sla": "3h19min"}, {"name": "Huriel Fogasso", "ra": "21:25", "pc": "11:19", "sla": "3h19min"}, {"name": "Bruna de Oliveira", "ra": "22:59", "pc": "11:19", "sla": "3h19min"}]}, "29933656": {"name": "Leticia Brainer", "n": 54, "n_sla": 46, "n_sem": 8, "med": "2h54min", "med_val": 174.272175, "p75": "6h42min", "pct": "43%", "pct_val": 43.47826086956522, "violacoes": [{"name": "Sandro Debas", "ra": "00:25", "pc": "16:08", "sla": "8h08min"}, {"name": "Letícia junckes", "ra": "14:22", "pc": "11:54", "sla": "7h31min"}, {"name": "Sibely", "ra": "20:25", "pc": "14:59", "sla": "6h59min"}, {"name": "Luciano", "ra": "21:52", "pc": "14:58", "sla": "6h58min"}, {"name": "Marcos ", "ra": "22:14", "pc": "14:56", "sla": "6h56min"}, {"name": "Aline Ribeiro", "ra": "22:37", "pc": "14:56", "sla": "6h56min"}, {"name": "Nathalie Bruzaferro", "ra": "23:43", "pc": "14:54", "sla": "6h54min"}, {"name": "Diogo Figueiredo", "ra": "22:23", "pc": "14:47", "sla": "6h47min"}, {"name": "André luiz", "ra": "22:01", "pc": "14:47", "sla": "6h47min"}, {"name": "Kalebe Gabriel", "ra": "23:53", "pc": "14:45", "sla": "6h45min"}, {"name": "Bruna Barbosa", "ra": "21:23", "pc": "14:45", "sla": "6h45min"}, {"name": "Daniela Viegas", "ra": "23:13", "pc": "14:42", "sla": "6h42min"}]}}}, "2026-08-24": {"label": "Segunda · 24/08", "n_total": 206, "n_active": 200, "sdrs": {"29157433": {"name": "Isabele Moraes", "n": 99, "n_sla": 76, "n_sem": 23, "med": "27min", "med_val": 27.99030833333333, "p75": "2h57min", "pct": "54%", "pct_val": 53.94736842105263, "violacoes": [{"name": "Felipe Otavio tonin de moura", "ra": "19:18", "pc": "10:39", "sla": "12h39min"}, {"name": "Giselle Marques", "ra": "19:18", "pc": "11:39", "sla": "3h39min"}, {"name": "RNascimento ", "ra": "18:53", "pc": "11:39", "sla": "3h39min"}, {"name": "Ana Luiza Andrade Teixeira ", "ra": "19:26", "pc": "11:39", "sla": "3h39min"}, {"name": "Julia Neves Cano", "ra": "19:18", "pc": "11:39", "sla": "3h39min"}, {"name": "Michel Cristhian de Oliveira Bezerra", "ra": "19:22", "pc": "11:39", "sla": "3h39min"}, {"name": "Evellyn dos Reis ", "ra": "19:26", "pc": "11:39", "sla": "3h39min"}, {"name": "Gabriela Pereira Novaes", "ra": "19:24", "pc": "11:39", "sla": "3h39min"}, {"name": "Gustavo augusto De Sales Albornoz", "ra": "19:28", "pc": "11:19", "sla": "3h19min"}, {"name": "LIEGE AVILA", "ra": "22:54", "pc": "10:57", "sla": "2h57min"}, {"name": "Daniel Mesquita", "ra": "20:38", "pc": "10:57", "sla": "2h57min"}, {"name": "Adrielle Van haandel", "ra": "19:49", "pc": "10:57", "sla": "2h57min"}]}, "31947044": {"name": "Tayrinne Fernandes", "n": 47, "n_sla": 41, "n_sem": 6, "med": "30min", "med_val": 30.31475, "p75": "56min", "pct": "49%", "pct_val": 48.78048780487805, "violacoes": [{"name": "Gisella", "ra": "16:29", "pc": "17:42", "sla": "11h12min"}, {"name": "jean meotti", "ra": "02:26", "pc": "09:49", "sla": "1h49min"}, {"name": "Gleice Kelly Rodrigues Rodrigues", "ra": "07:52", "pc": "09:24", "sla": "1h24min"}, {"name": "fabio magalhaes", "ra": "03:31", "pc": "09:24", "sla": "1h24min"}, {"name": "Paulo Fernando Borges Fagundes", "ra": "07:46", "pc": "09:24", "sla": "1h24min"}, {"name": "Romualdo Rodrigues", "ra": "07:53", "pc": "09:20", "sla": "1h20min"}, {"name": "Walter Cecchetto Filho", "ra": "08:13", "pc": "09:24", "sla": "1h10min"}, {"name": "Luana Laurett Groner", "ra": "10:16", "pc": "11:14", "sla": "57min"}, {"name": "Thiago Victor", "ra": "09:52", "pc": "10:50", "sla": "57min"}, {"name": "Laíz Lopes ", "ra": "22:04", "pc": "08:57", "sla": "57min"}, {"name": "CRISTIANO DAMAZIO", "ra": "21:44", "pc": "08:56", "sla": "56min"}, {"name": "Rodrigo Siqueira ", "ra": "21:37", "pc": "08:55", "sla": "55min"}]}, "29933656": {"name": "Leticia Brainer", "n": 54, "n_sla": 42, "n_sem": 12, "med": "1h29min", "med_val": 89.90958333333333, "p75": "2h34min", "pct": "31%", "pct_val": 30.952380952380953, "violacoes": [{"name": "Alan Silva dos Santos", "ra": "17:49", "pc": "18:17", "sla": "10h10min"}, {"name": "Leonardo de Castro Batista", "ra": "18:48", "pc": "12:23", "sla": "4h23min"}, {"name": "Elizabete goncalves ", "ra": "20:31", "pc": "10:49", "sla": "2h49min"}, {"name": "George Rodrigues", "ra": "20:35", "pc": "10:48", "sla": "2h48min"}, {"name": "Lucas Gabriel ", "ra": "21:01", "pc": "10:47", "sla": "2h47min"}, {"name": "Karen Waechter", "ra": "21:43", "pc": "10:45", "sla": "2h45min"}, {"name": "Sthephany Cavalcante da Silva ", "ra": "21:58", "pc": "10:44", "sla": "2h44min"}, {"name": "Cineide Maria Farias", "ra": "22:40", "pc": "10:43", "sla": "2h43min"}, {"name": "Jayanne", "ra": "22:56", "pc": "10:43", "sla": "2h43min"}, {"name": "Bruna Diacira", "ra": "23:10", "pc": "10:42", "sla": "2h42min"}, {"name": "Weliton Ribeiro ", "ra": "00:01", "pc": "10:34", "sla": "2h34min"}, {"name": "Raphael Passarella neto", "ra": "02:21", "pc": "10:20", "sla": "2h20min"}]}}}};
+  "2026-08-26": {"label":"Quarta · 26/08","n_total":382,"n_active":198,"n_off":184,"off_pct":"48,2%","sdrs":{"29157433":{"name":"Isabele Moraes","n":69,"n_sla":48,"n_sem":21,"med":"40min","med_val":39.85,"p75":"1h38min","p75_val":98,"pct":"38%","pct_val":37.5,"violacoes":[{"name":"Daniel Ribeiro Reis","ra":"08:09","pc":"11:40","sla":"3h30min"},{"name":"Paulo Roberto","ra":"08:11","pc":"11:40","sla":"3h28min"},{"name":"Ricardo Antonio","ra":"08:16","pc":"11:21","sla":"3h05min"},{"name":"Gabriel Mendes Souza","ra":"08:27","pc":"11:21","sla":"2h54min"},{"name":"Kátia Mayara","ra":"08:44","pc":"11:21","sla":"2h37min"},{"name":"Renato Lucio de Oliveira Martins","ra":"08:55","pc":"11:21","sla":"2h26min"},{"name":"Nathan barbosa","ra":"09:06","pc":"11:21","sla":"2h15min"},{"name":"Matheus Frota","ra":"09:13","pc":"11:21","sla":"2h08min"},{"name":"Vivian Mello","ra":"12:39","pc":"14:46","sla":"2h07min"},{"name":"Ellen Felícia Ferreira Miranda","ra":"09:30","pc":"11:21","sla":"1h51min"},{"name":"Aline Bernardes","ra":"09:37","pc":"11:21","sla":"1h44min"},{"name":"giselle Hilario","ra":"15:20","pc":"16:58","sla":"1h38min"}]},"31947044":{"name":"Tayrinne Fernandes","n":63,"n_sla":38,"n_sem":25,"med":"12min","med_val":12.25,"p75":"28min","p75_val":28,"pct":"76%","pct_val":76.3,"violacoes":[{"name":"Igor de Oliveira","ra":"08:36","pc":"09:38","sla":"1h02min"},{"name":"Léia Boechat","ra":"09:55","pc":"10:53","sla":"58min"},{"name":"Renan Vasconcellos","ra":"08:41","pc":"09:38","sla":"57min"},{"name":"Carla Lessa","ra":"09:58","pc":"10:53","sla":"55min"},{"name":"Ade Oliveira","ra":"10:03","pc":"10:53","sla":"50min"},{"name":"Ravini Villas Boas","ra":"13:04","pc":"13:52","sla":"48min"},{"name":"Lidiane Giori da Silva","ra":"08:55","pc":"09:38","sla":"44min"},{"name":"Fernando","ra":"09:00","pc":"09:38","sla":"39min"},{"name":"Suellen Rocha","ra":"09:26","pc":"09:57","sla":"31min"}]},"29933656":{"name":"Leticia Brainer","n":66,"n_sla":52,"n_sem":14,"med":"39min","med_val":39.09,"p75":"1h25min","p75_val":85,"pct":"38%","pct_val":38.5,"violacoes":[{"name":"Lucas carvalho","ra":"11:48","pc":"16:28","sla":"4h39min"},{"name":"Rhuan Matheus","ra":"08:05","pc":"11:44","sla":"3h38min"},{"name":"Miriã Michelle","ra":"08:08","pc":"11:44","sla":"3h35min"},{"name":"Rodrigo Melo","ra":"08:11","pc":"11:41","sla":"3h31min"},{"name":"Jefferson Diogo","ra":"14:29","pc":"18:16","sla":"3h30min"},{"name":"Carol Marques","ra":"08:20","pc":"11:40","sla":"3h21min"},{"name":"Glaucia Araujo","ra":"08:29","pc":"11:26","sla":"2h57min"},{"name":"Rafael Lima","ra":"09:02","pc":"11:19","sla":"2h17min"},{"name":"Mirian Portela","ra":"09:11","pc":"11:14","sla":"2h04min"},{"name":"Zito Campos","ra":"10:48","pc":"12:51","sla":"2h03min"},{"name":"Bianca Moreira","ra":"09:16","pc":"11:14","sla":"1h58min"},{"name":"Priscilla Braga","ra":"09:33","pc":"11:01","sla":"1h28min"}]}}},
+  "2026-08-25": {"label":"Terça · 25/08","n_total":193,"n_active":193,"n_off":0,"off_pct":"0%","sdrs":{"29157433":{"name":"Isabele Moraes","n":58,"n_sla":46,"n_sem":12,"med":"2h32min","med_val":152.6,"p75":"6h30min","p75_val":390,"pct":"35%","pct_val":34.8,"violacoes":[{"name":"Cristiane Lopes","ra":"19:50","pc":"14:53","sla":"6h53min"},{"name":"Rafael Gomes","ra":"19:13","pc":"14:51","sla":"6h51min"},{"name":"Ana Carolina Oliveira","ra":"20:23","pc":"14:51","sla":"6h51min"},{"name":"Tamires Krause","ra":"19:21","pc":"14:51","sla":"6h51min"},{"name":"Marcos Leonardo Paixão da Silva","ra":"19:20","pc":"14:51","sla":"6h51min"},{"name":"Diego Teixeira","ra":"19:21","pc":"14:51","sla":"6h51min"},{"name":"Paulo Henrique Aragão","ra":"21:16","pc":"14:30","sla":"6h30min"},{"name":"Camila Nonis","ra":"21:10","pc":"14:30","sla":"6h30min"},{"name":"Lucas Alves","ra":"20:27","pc":"14:30","sla":"6h30min"},{"name":"Rodrigo Maurício Corrêa","ra":"21:45","pc":"14:30","sla":"6h30min"},{"name":"CARLOS HENRIQUE DA ROCHA WEISS","ra":"21:28","pc":"14:30","sla":"6h30min"},{"name":"BEATRIZ APARECIDA DA SILVA","ra":"20:54","pc":"14:30","sla":"6h30min"}]},"31947044":{"name":"Tayrinne Fernandes","n":81,"n_sla":65,"n_sem":16,"med":"29min","med_val":29.3,"p75":"1h02min","p75_val":62,"pct":"52%","pct_val":52.3,"violacoes":[{"name":"Adriana Annoni","ra":"11:41","pc":"16:25","sla":"4h43min"},{"name":"Alana Munhoz","ra":"21:21","pc":"11:32","sla":"3h32min"},{"name":"Jussara Fernandes","ra":"21:18","pc":"11:28","sla":"3h28min"},{"name":"Jonathan Callai da silva","ra":"21:07","pc":"11:27","sla":"3h27min"},{"name":"Matusalem Lúcio","ra":"21:01","pc":"11:26","sla":"3h26min"},{"name":"Jose Luciano Rocha","ra":"20:28","pc":"11:24","sla":"3h24min"},{"name":"adriana rodrigues","ra":"22:30","pc":"11:20","sla":"3h20min"},{"name":"Aline Mitre Moreira","ra":"23:31","pc":"11:19","sla":"3h19min"},{"name":"Ester Medeiros","ra":"21:43","pc":"11:19","sla":"3h19min"},{"name":"Vilciani Menin","ra":"22:49","pc":"11:19","sla":"3h19min"},{"name":"Huriel Fogasso","ra":"21:25","pc":"11:19","sla":"3h19min"},{"name":"Bruna de Oliveira","ra":"22:59","pc":"11:19","sla":"3h19min"}]},"29933656":{"name":"Leticia Brainer","n":54,"n_sla":46,"n_sem":8,"med":"2h54min","med_val":174.3,"p75":"6h42min","p75_val":402,"pct":"43%","pct_val":43.5,"violacoes":[{"name":"Sandro Debas","ra":"00:25","pc":"16:08","sla":"8h08min"},{"name":"Letícia junckes","ra":"14:22","pc":"11:54","sla":"7h31min"},{"name":"Sibely","ra":"20:25","pc":"14:59","sla":"6h59min"},{"name":"Luciano","ra":"21:52","pc":"14:58","sla":"6h58min"},{"name":"Marcos","ra":"22:14","pc":"14:56","sla":"6h56min"},{"name":"Aline Ribeiro","ra":"22:37","pc":"14:56","sla":"6h56min"},{"name":"Nathalie Bruzaferro","ra":"23:43","pc":"14:54","sla":"6h54min"},{"name":"Diogo Figueiredo","ra":"22:23","pc":"14:47","sla":"6h47min"},{"name":"André luiz","ra":"22:01","pc":"14:47","sla":"6h47min"},{"name":"Kalebe Gabriel","ra":"23:53","pc":"14:45","sla":"6h45min"},{"name":"Bruna Barbosa","ra":"21:23","pc":"14:45","sla":"6h45min"},{"name":"Daniela Viegas","ra":"23:13","pc":"14:42","sla":"6h42min"}]}}},
+  "2026-08-24": {"label":"Segunda · 24/08","n_total":206,"n_active":200,"n_off":6,"off_pct":"2,9%","sdrs":{"29157433":{"name":"Isabele Moraes","n":99,"n_sla":76,"n_sem":23,"med":"27min","med_val":28.0,"p75":"2h57min","p75_val":177,"pct":"54%","pct_val":53.9,"violacoes":[{"name":"Felipe Otavio tonin de moura","ra":"19:18","pc":"10:39","sla":"12h39min"},{"name":"Giselle Marques","ra":"19:18","pc":"11:39","sla":"3h39min"},{"name":"RNascimento","ra":"18:53","pc":"11:39","sla":"3h39min"},{"name":"Ana Luiza Andrade Teixeira","ra":"19:26","pc":"11:39","sla":"3h39min"},{"name":"Julia Neves Cano","ra":"19:18","pc":"11:39","sla":"3h39min"},{"name":"Michel Cristhian de Oliveira Bezerra","ra":"19:22","pc":"11:39","sla":"3h39min"},{"name":"Evellyn dos Reis","ra":"19:26","pc":"11:39","sla":"3h39min"},{"name":"Gabriela Pereira Novaes","ra":"19:24","pc":"11:39","sla":"3h39min"},{"name":"Gustavo augusto De Sales Albornoz","ra":"19:28","pc":"11:19","sla":"3h19min"},{"name":"LIEGE AVILA","ra":"22:54","pc":"10:57","sla":"2h57min"},{"name":"Daniel Mesquita","ra":"20:38","pc":"10:57","sla":"2h57min"},{"name":"Adrielle Van haandel","ra":"19:49","pc":"10:57","sla":"2h57min"}]},"31947044":{"name":"Tayrinne Fernandes","n":47,"n_sla":41,"n_sem":6,"med":"30min","med_val":30.3,"p75":"56min","p75_val":56,"pct":"49%","pct_val":48.8,"violacoes":[{"name":"Gisella","ra":"16:29","pc":"17:42","sla":"11h12min"},{"name":"jean meotti","ra":"02:26","pc":"09:49","sla":"1h49min"},{"name":"Gleice Kelly Rodrigues Rodrigues","ra":"07:52","pc":"09:24","sla":"1h24min"},{"name":"fabio magalhaes","ra":"03:31","pc":"09:24","sla":"1h24min"},{"name":"Paulo Fernando Borges Fagundes","ra":"07:46","pc":"09:24","sla":"1h24min"},{"name":"Romualdo Rodrigues","ra":"07:53","pc":"09:20","sla":"1h20min"},{"name":"Walter Cecchetto Filho","ra":"08:13","pc":"09:24","sla":"1h10min"},{"name":"Luana Laurett Groner","ra":"10:16","pc":"11:14","sla":"57min"},{"name":"Thiago Victor","ra":"09:52","pc":"10:50","sla":"57min"},{"name":"Laíz Lopes","ra":"22:04","pc":"08:57","sla":"57min"},{"name":"CRISTIANO DAMAZIO","ra":"21:44","pc":"08:56","sla":"56min"},{"name":"Rodrigo Siqueira","ra":"21:37","pc":"08:55","sla":"55min"}]},"29933656":{"name":"Leticia Brainer","n":54,"n_sla":42,"n_sem":12,"med":"1h29min","med_val":89.9,"p75":"2h34min","p75_val":154,"pct":"31%","pct_val":31.0,"violacoes":[{"name":"Alan Silva dos Santos","ra":"17:49","pc":"18:17","sla":"10h10min"},{"name":"Leonardo de Castro Batista","ra":"18:48","pc":"12:23","sla":"4h23min"},{"name":"Elizabete goncalves","ra":"20:31","pc":"10:49","sla":"2h49min"},{"name":"George Rodrigues","ra":"20:35","pc":"10:48","sla":"2h48min"},{"name":"Lucas Gabriel","ra":"21:01","pc":"10:47","sla":"2h47min"},{"name":"Karen Waechter","ra":"21:43","pc":"10:45","sla":"2h45min"},{"name":"Sthephany Cavalcante da Silva","ra":"21:58","pc":"10:44","sla":"2h44min"},{"name":"Cineide Maria Farias","ra":"22:40","pc":"10:43","sla":"2h43min"},{"name":"Jayanne","ra":"22:56","pc":"10:43","sla":"2h43min"},{"name":"Bruna Diacira","ra":"23:10","pc":"10:42","sla":"2h42min"},{"name":"Weliton Ribeiro","ra":"00:01","pc":"10:34","sla":"2h34min"},{"name":"Raphael Passarella neto","ra":"02:21","pc":"10:20","sla":"2h20min"}]}}}
+};
+
 const ORDER = ['29157433','31947044','29933656'];
 
 function colorPct(v){ return v>=75?'green':v>=50?'amber':'red'; }
 function colorMed(v){ return v<20?'green':v<=30?'amber':'red'; }
 function colorP75(v){ return v<30?'green':v<=60?'amber':'red'; }
 function slaToMin(s){
+  if(!s||s==='Sem contato'||s==='—') return -1;
   let m=0; const h=s.match(/(\d+)h/),mn=s.match(/(\d+)min/);
   if(h)m+=parseInt(h[1])*60; if(mn)m+=parseInt(mn[1]); return m;
 }
-function slaClass(s){const m=slaToMin(s);return m>=300?'sla-crit':m>30?'sla-warn':''}
+function slaClass(s){
+  const m=slaToMin(s);
+  if(m<0) return 'sla-nocontact';
+  return m>=300?'sla-crit':m>30?'sla-warn':'';
+}
 
 function renderDay(dateKey){
   const day = DATA[dateKey];
-  if(!day)return;
-  const n_active = day.n_active;
-  const n_total = day.n_total;
-  const off_pct = day.off_pct||null;
-  const n_off = day.n_off||null;
+  if(!day) return;
 
   document.getElementById('run-info-label').textContent =
-    n_active + ' leads em horário comercial (08h–18h) · total do dia ' + n_total + ' · horário BRT';
+    day.n_active + ' leads em horário comercial (08h–18h) · total do dia ' + day.n_total + ' · sem duplicados · BRT';
   document.getElementById('sla-day-label').textContent = 'Desempenho por SDR Manager · ' + day.label;
   document.getElementById('vio-title').textContent = 'Maiores violações de SLA (>30min úteis) · ' + day.label;
 
   // Off-hours banner
   const banner = document.getElementById('off-hours-alert');
-  if(off_pct && n_off){
-    const pctNum = parseFloat(off_pct);
+  if(day.n_off > 0){
+    const pctNum = parseFloat(day.off_pct);
     const cls = pctNum >= 40 ? 'warn' : 'ok';
     banner.innerHTML = `<div class="off-hours-banner ${cls}">
       <span class="off-icon">🌙</span>
       <div>
-        <span class="off-pct-val">${off_pct}</span>
-        <strong>dos leads chegaram fora do horário comercial</strong> (${n_off} de ${n_total} leads) — excluídos da análise de SLA.
-        Esses leads entram na fila de abertura do próximo dia útil às 10h.
+        <span class="off-pct-val">${day.off_pct}</span>
+        <strong>dos leads chegaram fora do horário comercial</strong> (${day.n_off} de ${day.n_total} leads) — excluídos da análise de SLA.
+        Esses leads entram na fila de abertura do próximo dia útil.
       </div>
     </div>`;
   } else {
     banner.innerHTML = '';
   }
+
+  // Summary strip
+  document.getElementById('summary-strip').innerHTML = `
+    <div class="sum-card">
+      <div class="sum-label">Total de Leads</div>
+      <div class="sum-value">${day.n_total}</div>
+      <div class="sum-sub">únicos após deduplicação</div>
+    </div>
+    <div class="sum-card">
+      <div class="sum-label">Horário Comercial</div>
+      <div class="sum-value">${day.n_active}</div>
+      <div class="sum-sub">leads entre 08h–18h BRT</div>
+    </div>
+    <div class="sum-card">
+      <div class="sum-label">Fora do Horário</div>
+      <div class="sum-value">${day.n_off||0}</div>
+      <div class="sum-sub">chegaram fora do expediente</div>
+    </div>`;
 
   // SDR cards
   const grid = document.getElementById('sdr-grid-area');
@@ -618,7 +667,7 @@ function renderDay(dateKey){
     if(!s) return '';
     const pctCol=colorPct(s.pct_val);
     const medCol=colorMed(s.med_val);
-    const p75Col=colorP75(slaToMin(s.p75));
+    const p75Col=colorP75(s.p75_val||slaToMin(s.p75));
     return `<div class="sdr-card">
       <div class="sdr-card-header">
         <div class="sdr-name">${s.name}</div>
@@ -628,18 +677,25 @@ function renderDay(dateKey){
         <div class="kpi-item"><div class="kpi-label">Mediana SLA</div><div class="kpi-value ${medCol}">${s.med}</div><div class="kpi-sub">tempo útil</div></div>
         <div class="kpi-item"><div class="kpi-label">Percentil 75</div><div class="kpi-value ${p75Col}">${s.p75}</div><div class="kpi-sub">75% dos leads</div></div>
         <div class="kpi-item"><div class="kpi-label">% dentro ≤30min</div><div class="kpi-value ${pctCol}">${s.pct}</div><div class="kpi-sub">de ${s.n_sla} com registro</div></div>
-        <div class="kpi-item"><div class="kpi-label">Sem contato</div><div class="kpi-value">${s.n_sem}</div><div class="kpi-sub">sem TW ou CE</div></div>
+        <div class="kpi-item"><div class="kpi-label">Sem contato</div><div class="kpi-value ${colorPct(100-s.n_sem/s.n*100)<'amber'?'red':'amber'}">${s.n_sem}</div><div class="kpi-sub">sem TW ou CE</div></div>
       </div>
     </div>`;
   }).join('');
 
-  // Violations table
+  // Violations table — all violations from all SDRs, timed first (desc), then sem contato
   const rows=[];
   ORDER.forEach(wid=>{
     if(!day.sdrs[wid]) return;
     day.sdrs[wid].violacoes.forEach(v=>rows.push({sdr:day.sdrs[wid].name,...v}));
   });
-  rows.sort((a,b)=>slaToMin(b.sla)-slaToMin(a.sla));
+  // Sort: timed violations by SLA desc, sem contato at the end
+  rows.sort((a,b)=>{
+    const ma=slaToMin(a.sla), mb=slaToMin(b.sla);
+    if(ma<0 && mb<0) return 0;
+    if(ma<0) return 1;
+    if(mb<0) return -1;
+    return mb-ma;
+  });
   document.getElementById('viol-tbody').innerHTML = rows.length===0
     ? '<tr><td colspan="5" style="text-align:center;padding:20px;color:var(--text-3);font-size:12px">Nenhuma violação de SLA ✓</td></tr>'
     : rows.map(r=>`<tr>
@@ -660,9 +716,7 @@ function showTab(id,btn){
   btn.classList.add('active');
 }
 
-// Init — show most recent date
 renderDay('2026-08-27');
-
 </script>
 </body>
 </html>
