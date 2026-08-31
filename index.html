@@ -197,6 +197,7 @@ body{font-family:'Inter',-apple-system,sans-serif;background:var(--bg);color:var
       <div class="date-selector-wrap">
         <span class="date-label">Data:</span>
         <select class="date-select" id="dateSelect" onchange="changeDate(this.value)">
+          <option value="2026-08-28">Sexta · 28/08</option>
           <option value="2026-08-27">Quinta · 27/08</option>
           <option value="2026-08-26">Quarta · 26/08</option>
           <option value="2026-08-25">Terça · 25/08</option>
@@ -544,6 +545,57 @@ body{font-family:'Inter',-apple-system,sans-serif;background:var(--bg);color:var
 
 <script>
 const DATA = {
+  "2026-08-28": {
+    label: "Sexta · 28/08",
+    n_total: 245,
+    n_active: 105,
+    n_off: 140,
+    off_pct: "57,1%",
+    sdrs: {
+      "29157433":{name:"Isabele Moraes",n:35,n_sla:30,n_sem:5,med:"30min",med_val:29.9,p75:"1h13min",p75_val:72.7,pct:"50%",pct_val:50,violacoes:[
+        {name:"Michelle L",ra:"08:11",pc:"11:34",sla:"3h23min"},
+        {name:"Thais Oliveira",ra:"08:38",pc:"11:34",sla:"2h55min"},
+        {name:"Matheus Medina Garcia",ra:"09:10",pc:"11:34",sla:"2h24min"},
+        {name:"Leticia Muniz",ra:"09:39",pc:"11:34",sla:"1h54min"},
+        {name:"Aline de Oliveira Pinheiro",ra:"09:43",pc:"11:34",sla:"1h50min"},
+        {name:"Wictor boaventura",ra:"10:01",pc:"11:34",sla:"1h32min"},
+        {name:"Ericles Alves",ra:"10:14",pc:"11:34",sla:"1h20min"},
+        {name:"Gabriela Barroso Porto",ra:"10:21",pc:"11:34",sla:"1h13min"},
+        {name:"Clara Milly Costa da Silva",ra:"14:17",pc:"15:11",sla:"54min"},
+        {name:"EMILLY RODRIGUES",ra:"10:26",pc:"11:17",sla:"51min"},
+        {name:"Glauce Lelis Duarte",ra:"15:38",pc:"16:16",sla:"38min"},
+        {name:"Gabriel Veras",ra:"15:44",pc:"16:17",sla:"33min"}
+      ]},
+      "31947044":{name:"Tayrinne Fernandes",n:41,n_sla:25,n_sem:16,med:"16min",med_val:16.1,p75:"28min",p75_val:28.0,pct:"76%",pct_val:76,violacoes:[
+        {name:"Gustavo Costa",ra:"09:20",pc:"10:28",sla:"1h08min"},
+        {name:"Eduardo Costa e Silva",ra:"09:29",pc:"10:17",sla:"49min"},
+        {name:"vinicius jose",ra:"09:34",pc:"10:16",sla:"41min"},
+        {name:"Solandra",ra:"08:20",pc:"09:01",sla:"41min"},
+        {name:"Alessandra Richa",ra:"08:24",pc:"09:00",sla:"36min"},
+        {name:"Maira Flores",ra:"09:42",pc:"10:14",sla:"31min"},
+        {name:"Zenildo Silva",ra:"17:39",pc:"—",sla:"Sem contato"},
+        {name:"MICHAEL WILLIAM BARBOZA CASTILHIANO",ra:"16:50",pc:"—",sla:"Sem contato"},
+        {name:"Renan Recalchi",ra:"16:44",pc:"—",sla:"Sem contato"},
+        {name:"Eduardo Collor",ra:"16:15",pc:"—",sla:"Sem contato"},
+        {name:"Gizele Fonseca",ra:"15:53",pc:"—",sla:"Sem contato"},
+        {name:"Sara Theml",ra:"13:59",pc:"—",sla:"Sem contato"}
+      ]},
+      "29933656":{name:"Leticia Brainer",n:29,n_sla:26,n_sem:3,med:"44min",med_val:44.4,p75:"2h15min",p75_val:134.9,pct:"35%",pct_val:35,violacoes:[
+        {name:"Fabio ferreira",ra:"08:10",pc:"12:40",sla:"4h31min"},
+        {name:"MÔNICA",ra:"08:13",pc:"12:39",sla:"4h26min"},
+        {name:"Caio Cezar Augustus Caniato",ra:"09:03",pc:"12:37",sla:"3h34min"},
+        {name:"Alex Brandao",ra:"09:09",pc:"12:08",sla:"2h59min"},
+        {name:"Allyson Cordeiro",ra:"09:33",pc:"12:05",sla:"2h32min"},
+        {name:"João Moreira",ra:"09:43",pc:"12:04",sla:"2h21min"},
+        {name:"Yan Pinheiro",ra:"09:47",pc:"12:02",sla:"2h15min"},
+        {name:"Karisten Da Silva Correia Oliveira",ra:"12:45",pc:"14:27",sla:"1h42min"},
+        {name:"Gregory do Vale",ra:"10:16",pc:"11:49",sla:"1h33min"},
+        {name:"Gustavo",ra:"10:21",pc:"11:46",sla:"1h26min"},
+        {name:"LUCAS DE MATTOS DUARTE",ra:"13:09",pc:"14:12",sla:"1h03min"},
+        {name:"Maurício Fanucchi",ra:"13:18",pc:"14:12",sla:"54min"}
+      ]}
+    }
+  },
   "2026-08-27": {
     label: "Quinta · 27/08",
     n_total: 246,
@@ -716,7 +768,7 @@ function showTab(id,btn){
   btn.classList.add('active');
 }
 
-renderDay('2026-08-27');
+renderDay('2026-08-28');
 </script>
 </body>
 </html>
