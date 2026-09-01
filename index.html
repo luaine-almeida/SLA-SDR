@@ -197,6 +197,7 @@ body{font-family:'Inter',-apple-system,sans-serif;background:var(--bg);color:var
       <div class="date-selector-wrap">
         <span class="date-label">Data:</span>
         <select class="date-select" id="dateSelect" onchange="changeDate(this.value)">
+          <option value="2026-08-31">Segunda · 31/08</option>
           <option value="2026-08-28">Sexta · 28/08</option>
           <option value="2026-08-27">Quinta · 27/08</option>
           <option value="2026-08-26">Quarta · 26/08</option>
@@ -206,7 +207,7 @@ body{font-family:'Inter',-apple-system,sans-serif;background:var(--bg);color:var
       </div>
       <div class="hdr-meta">
         <strong>Pipeline:</strong> Brazil / Sales (110797558)<br>
-        <strong>Meta SLA:</strong> ≤ 30min · Seg–Sex 08h–18h BRT
+        <strong>Meta SLA:</strong> ≤ 30min · Tayrinne: 07h30–16h30 · Isabele &amp; Leticia: 10h–19h BRT
       </div>
     </div>
   </div>
@@ -226,7 +227,7 @@ body{font-family:'Inter',-apple-system,sans-serif;background:var(--bg);color:var
   </div>
 
   <div class="sla-rule">
-    <span>Meta: ≤ 30min</span> em horário comercial (Seg–Sex 08h–18h BRT) · RA → MIN(Taken to Work, Contact Established) · <strong>P75</strong> = 75% dos leads foram atendidos dentro desse tempo · duplicados removidos (lead aberto preservado)
+    <span>Meta: ≤ 30min</span> em horário comercial (Seg–Sex) · RA → MIN(Taken to Work, Contact Established) · <strong>Tayrinne:</strong> 07h30–16h30 · <strong>Isabele &amp; Leticia:</strong> 10h–19h BRT · <strong>P75</strong> = 75% dos leads atendidos dentro desse tempo · duplicados removidos
   </div>
 
   <div id="off-hours-alert"></div>
@@ -545,6 +546,61 @@ body{font-family:'Inter',-apple-system,sans-serif;background:var(--bg);color:var
 
 <script>
 const DATA = {
+  "2026-08-31": {
+    label: "Segunda · 31/08",
+    n_total: 299,
+    n_active: 141,
+    n_off: 158,
+    off_pct: "52,8%",
+    sdrs: {
+      "29157433":{name:"Isabele Moraes",n:42,n_sla:32,n_sem:10,med:"24min",med_val:24,p75:"1h41min",p75_val:101,pct:"59%",pct_val:59.4,violacoes:[
+        {name:"Mimi Lorrany",ra:"10:09",pc:"14:12",sla:"4h03min"},
+        {name:"Robson Almeida",ra:"10:17",pc:"14:10",sla:"3h53min"},
+        {name:"Ewerton Miguel Silva dos Anjos",ra:"10:27",pc:"14:12",sla:"3h46min"},
+        {name:"João Macedo",ra:"11:28",pc:"14:12",sla:"2h44min"},
+        {name:"Lilian Lopes",ra:"11:37",pc:"14:12",sla:"2h35min"},
+        {name:"Cristiane",ra:"11:45",pc:"14:12",sla:"2h27min"},
+        {name:"guilherme franco",ra:"12:08",pc:"14:12",sla:"2h05min"},
+        {name:"Fabio Lentino",ra:"12:13",pc:"13:55",sla:"1h41min"},
+        {name:"Eduardo guilherme",ra:"12:31",pc:"13:42",sla:"1h11min"},
+        {name:"Moisés",ra:"17:50",pc:"19:57",sla:"1h09min"},
+        {name:"Ivo Fulco",ra:"17:53",pc:"19:57",sla:"1h06min"},
+        {name:"Gabriel Nicotra",ra:"18:09",pc:"19:57",sla:"51min"}
+      ]},
+      "31947044":{name:"Tayrinne Fernandes",n:56,n_sla:40,n_sem:16,med:"15min",med_val:15,p75:"36min",p75_val:36,pct:"73%",pct_val:72.5,violacoes:[
+        {name:"leon Denis da Silva",ra:"07:30",pc:"09:09",sla:"1h40min"},
+        {name:"Raugel Assis",ra:"09:17",pc:"10:52",sla:"1h36min"},
+        {name:"Yron tomimitsu hazzure",ra:"07:40",pc:"09:08",sla:"1h28min"},
+        {name:"Leticia nascimento silva",ra:"07:56",pc:"09:07",sla:"1h11min"},
+        {name:"Carlos José",ra:"09:50",pc:"10:53",sla:"1h03min"},
+        {name:"Youssef sayed",ra:"12:23",pc:"13:11",sla:"48min"},
+        {name:"Gabriel Mendes",ra:"08:18",pc:"09:05",sla:"48min"},
+        {name:"Anderson Lemos Ribeiro",ra:"11:37",pc:"12:22",sla:"45min"},
+        {name:"Ligia Begnini",ra:"09:58",pc:"10:35",sla:"37min"},
+        {name:"Henrique hashioko",ra:"07:51",pc:"08:28",sla:"36min"},
+        {name:"Kauan Santiago de Oliveira Dias",ra:"11:46",pc:"12:22",sla:"36min"},
+        {name:"Thaynara Santos",ra:"15:55",pc:"—",sla:"Sem contato"}
+      ]},
+      "29933656":{name:"Leticia Brainer",n:43,n_sla:35,n_sem:8,med:"28min",med_val:28,p75:"48min",p75_val:48,pct:"57%",pct_val:57.1,violacoes:[
+        {name:"Eduardo Almeida",ra:"14:13",pc:"15:35",sla:"1h22min"},
+        {name:"RODRIGO AUGUSTO PORTELLA",ra:"11:46",pc:"13:04",sla:"1h19min"},
+        {name:"BJ Monteiro",ra:"14:19",pc:"15:34",sla:"1h15min"},
+        {name:"Letícia Carvalho",ra:"14:26",pc:"15:34",sla:"1h08min"},
+        {name:"Celino Ladonga",ra:"11:56",pc:"12:57",sla:"1h01min"},
+        {name:"Christina Vieira Cirillo",ra:"10:37",pc:"11:35",sla:"59min"},
+        {name:"robson peixoto",ra:"14:41",pc:"15:33",sla:"53min"},
+        {name:"Claudia Patricio da Silva",ra:"10:44",pc:"11:34",sla:"50min"},
+        {name:"Carlos Fernando vidal fontes",ra:"12:09",pc:"12:57",sla:"48min"},
+        {name:"lucas lilli camargo",ra:"14:49",pc:"15:33",sla:"44min"},
+        {name:"Vitor Monteiro",ra:"17:52",pc:"18:28",sla:"37min"},
+        {name:"Nicoly Costa",ra:"12:16",pc:"12:53",sla:"36min"}
+      ]},
+      "1201941990":{name:"Natália Martins",n:0,n_sla:0,n_sem:0,med:"—",med_val:0,p75:"—",p75_val:0,pct:"—",pct_val:0,violacoes:[]},
+      "35667650":{name:"Erick Paiva",n:0,n_sla:0,n_sem:0,med:"—",med_val:0,p75:"—",p75_val:0,pct:"—",pct_val:0,violacoes:[]},
+      "1201941994":{name:"Larissa Ciuldim",n:2,n_sla:0,n_sem:0,med:"—",med_val:0,p75:"—",p75_val:0,pct:"—",pct_val:0,violacoes:[]},
+      "35852628":{name:"Raphael Soares",n:0,n_sla:0,n_sem:0,med:"—",med_val:0,p75:"—",p75_val:0,pct:"—",pct_val:0,violacoes:[]}
+    }
+  },
   "2026-08-28": {
     label: "Sexta · 28/08",
     n_total: 245,
@@ -768,7 +824,7 @@ function showTab(id,btn){
   btn.classList.add('active');
 }
 
-renderDay('2026-08-28');
+renderDay('2026-08-31');
 </script>
 </body>
 </html>
