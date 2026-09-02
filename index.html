@@ -87,7 +87,7 @@ body{font-family:'Inter',-apple-system,sans-serif;background:var(--bg);color:var
 .sum-sub{font-size:11px;color:var(--text-3);margin-top:3px}
 
 /* SDR CARDS */
-.sdr-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:24px}
+.sdr-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(270px,1fr));gap:14px;margin-bottom:24px}
 .sdr-card{background:var(--surface);border:1px solid var(--border);border-radius:10px;overflow:hidden}
 .sdr-card-header{padding:12px 16px 10px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
 .sdr-name{font-size:14px;font-weight:700;color:var(--text)}
@@ -197,6 +197,7 @@ body{font-family:'Inter',-apple-system,sans-serif;background:var(--bg);color:var
       <div class="date-selector-wrap">
         <span class="date-label">Data:</span>
         <select class="date-select" id="dateSelect" onchange="changeDate(this.value)">
+          <option value="2026-09-01">Terça · 01/09</option>
           <option value="2026-08-31">Segunda · 31/08</option>
           <option value="2026-08-28">Sexta · 28/08</option>
           <option value="2026-08-27">Quinta · 27/08</option>
@@ -546,6 +547,61 @@ body{font-family:'Inter',-apple-system,sans-serif;background:var(--bg);color:var
 
 <script>
 const DATA = {
+  "2026-09-01": {
+    label: "Terça · 01/09",
+    n_total: 318,
+    n_active: 151,
+    n_off: 167,
+    off_pct: "52,5%",
+    sdrs: {
+      "29157433":{name:"Isabele Moraes",n:39,n_sla:28,n_sem:11,med:"13min",med_val:13,p75:"3h13min",p75_val:193,pct:"64%",pct_val:64.3,violacoes:[
+        {name:"Jessica Martins",ra:"13:19",pc:"18:44",sla:"4h40min"},
+        {name:"Pedro Denardi de Oliveira",ra:"08:01",pc:"11:50",sla:"3h48min"},
+        {name:"Martha lucena",ra:"08:15",pc:"11:50",sla:"3h35min"},
+        {name:"Eline Ramalho",ra:"08:20",pc:"11:50",sla:"3h30min"},
+        {name:"Matusalem Suares Lúcio",ra:"08:25",pc:"11:51",sla:"3h25min"},
+        {name:"DARI PISSETTI JUNIOR",ra:"08:30",pc:"11:50",sla:"3h20min"},
+        {name:"Samara Santos",ra:"08:36",pc:"11:50",sla:"3h13min"},
+        {name:"Maiara Noemia Costa Cardoso",ra:"09:39",pc:"11:50",sla:"2h11min"},
+        {name:"Gabriel oliveira",ra:"09:33",pc:"11:41",sla:"2h8min"},
+        {name:"André moura",ra:"15:17",pc:"16:23",sla:"1h7min"}
+      ]},
+      "31947044":{name:"Tayrinne Fernandes",n:78,n_sla:57,n_sem:21,med:"15min",med_val:15,p75:"30min",p75_val:30,pct:"74%",pct_val:73.7,violacoes:[
+        {name:"Marcos Lotici",ra:"09:33",pc:"11:08",sla:"1h35min"},
+        {name:"Tiago de Jesus",ra:"09:52",pc:"11:02",sla:"1h10min"},
+        {name:"Katia Silva",ra:"08:00",pc:"09:04",sla:"1h4min"},
+        {name:"Leonardo Gomes",ra:"10:05",pc:"11:09",sla:"1h4min"},
+        {name:"stephanie",ra:"10:06",pc:"11:10",sla:"1h4min"},
+        {name:"Luciana Bonanno",ra:"13:21",pc:"14:22",sla:"1h1min"},
+        {name:"Alexandre Decelli",ra:"08:06",pc:"09:05",sla:"59min"},
+        {name:"Vinicius fischborn",ra:"10:21",pc:"11:11",sla:"50min"},
+        {name:"Borges",ra:"10:22",pc:"11:06",sla:"45min"},
+        {name:"Guilherme Henrique",ra:"10:23",pc:"11:07",sla:"44min"},
+        {name:"Jessica Bucalon",ra:"08:27",pc:"09:06",sla:"39min"},
+        {name:"Kauã Della Torre",ra:"10:31",pc:"11:05",sla:"34min"}
+      ]},
+      "29933656":{name:"Leticia Brainer",n:31,n_sla:25,n_sem:6,med:"32min",med_val:32,p75:"1h56min",p75_val:116,pct:"48%",pct_val:48.0,violacoes:[
+        {name:"Ingrid Gomes Correa",ra:"08:03",pc:"11:24",sla:"3h21min"},
+        {name:"Juliane silva araujo",ra:"08:16",pc:"11:23",sla:"3h7min"},
+        {name:"Sarah Soares de Oliveira",ra:"08:23",pc:"11:22",sla:"2h59min"},
+        {name:"Patricia Blanco",ra:"08:35",pc:"11:21",sla:"2h45min"},
+        {name:"Jean santos",ra:"08:46",pc:"11:18",sla:"2h32min"},
+        {name:"Ester Joyce",ra:"08:52",pc:"11:09",sla:"2h17min"},
+        {name:"Wilton Carvalho da Silva",ra:"09:11",pc:"11:07",sla:"1h56min"},
+        {name:"Thays Lanusse Gomes Lopes",ra:"09:31",pc:"11:05",sla:"1h34min"},
+        {name:"Thiago dos Santos Silva",ra:"09:35",pc:"11:04",sla:"1h29min"},
+        {name:"Christian",ra:"09:41",pc:"11:03",sla:"1h22min"},
+        {name:"Hercio Lazaro Sibia",ra:"15:18",pc:"16:22",sla:"1h4min"},
+        {name:"Bruno Anselmo Dias",ra:"16:43",pc:"17:18",sla:"34min"}
+      ]},
+      "1201941990":{name:"Natália Martins",n:0,n_sla:0,n_sem:0,med:"—",med_val:0,p75:"—",p75_val:0,pct:"—",pct_val:0,violacoes:[]},
+      "35667650":{name:"Erick Paiva",n:0,n_sla:0,n_sem:0,med:"—",med_val:0,p75:"—",p75_val:0,pct:"—",pct_val:0,violacoes:[]},
+      "1201941994":{name:"Larissa Ciuldim",n:3,n_sla:3,n_sem:0,med:"18min",med_val:18,p75:"5h42min",p75_val:342,pct:"67%",pct_val:66.7,violacoes:[
+        {name:"Diego",ra:"12:18",pc:"18:03",sla:"5h42min"}
+      ]},
+      "35852628":{name:"Raphael Soares",n:0,n_sla:0,n_sem:0,med:"—",med_val:0,p75:"—",p75_val:0,pct:"—",pct_val:0,violacoes:[]}
+    }
+  },
   "2026-08-31": {
     label: "Segunda · 31/08",
     n_total: 299,
@@ -708,7 +764,7 @@ const DATA = {
   "2026-08-24": {"label":"Segunda · 24/08","n_total":206,"n_active":200,"n_off":6,"off_pct":"2,9%","sdrs":{"29157433":{"name":"Isabele Moraes","n":99,"n_sla":76,"n_sem":23,"med":"27min","med_val":28.0,"p75":"2h57min","p75_val":177,"pct":"54%","pct_val":53.9,"violacoes":[{"name":"Felipe Otavio tonin de moura","ra":"19:18","pc":"10:39","sla":"12h39min"},{"name":"Giselle Marques","ra":"19:18","pc":"11:39","sla":"3h39min"},{"name":"RNascimento","ra":"18:53","pc":"11:39","sla":"3h39min"},{"name":"Ana Luiza Andrade Teixeira","ra":"19:26","pc":"11:39","sla":"3h39min"},{"name":"Julia Neves Cano","ra":"19:18","pc":"11:39","sla":"3h39min"},{"name":"Michel Cristhian de Oliveira Bezerra","ra":"19:22","pc":"11:39","sla":"3h39min"},{"name":"Evellyn dos Reis","ra":"19:26","pc":"11:39","sla":"3h39min"},{"name":"Gabriela Pereira Novaes","ra":"19:24","pc":"11:39","sla":"3h39min"},{"name":"Gustavo augusto De Sales Albornoz","ra":"19:28","pc":"11:19","sla":"3h19min"},{"name":"LIEGE AVILA","ra":"22:54","pc":"10:57","sla":"2h57min"},{"name":"Daniel Mesquita","ra":"20:38","pc":"10:57","sla":"2h57min"},{"name":"Adrielle Van haandel","ra":"19:49","pc":"10:57","sla":"2h57min"}]},"31947044":{"name":"Tayrinne Fernandes","n":47,"n_sla":41,"n_sem":6,"med":"30min","med_val":30.3,"p75":"56min","p75_val":56,"pct":"49%","pct_val":48.8,"violacoes":[{"name":"Gisella","ra":"16:29","pc":"17:42","sla":"11h12min"},{"name":"jean meotti","ra":"02:26","pc":"09:49","sla":"1h49min"},{"name":"Gleice Kelly Rodrigues Rodrigues","ra":"07:52","pc":"09:24","sla":"1h24min"},{"name":"fabio magalhaes","ra":"03:31","pc":"09:24","sla":"1h24min"},{"name":"Paulo Fernando Borges Fagundes","ra":"07:46","pc":"09:24","sla":"1h24min"},{"name":"Romualdo Rodrigues","ra":"07:53","pc":"09:20","sla":"1h20min"},{"name":"Walter Cecchetto Filho","ra":"08:13","pc":"09:24","sla":"1h10min"},{"name":"Luana Laurett Groner","ra":"10:16","pc":"11:14","sla":"57min"},{"name":"Thiago Victor","ra":"09:52","pc":"10:50","sla":"57min"},{"name":"Laíz Lopes","ra":"22:04","pc":"08:57","sla":"57min"},{"name":"CRISTIANO DAMAZIO","ra":"21:44","pc":"08:56","sla":"56min"},{"name":"Rodrigo Siqueira","ra":"21:37","pc":"08:55","sla":"55min"}]},"29933656":{"name":"Leticia Brainer","n":54,"n_sla":42,"n_sem":12,"med":"1h29min","med_val":89.9,"p75":"2h34min","p75_val":154,"pct":"31%","pct_val":31.0,"violacoes":[{"name":"Alan Silva dos Santos","ra":"17:49","pc":"18:17","sla":"10h10min"},{"name":"Leonardo de Castro Batista","ra":"18:48","pc":"12:23","sla":"4h23min"},{"name":"Elizabete goncalves","ra":"20:31","pc":"10:49","sla":"2h49min"},{"name":"George Rodrigues","ra":"20:35","pc":"10:48","sla":"2h48min"},{"name":"Lucas Gabriel","ra":"21:01","pc":"10:47","sla":"2h47min"},{"name":"Karen Waechter","ra":"21:43","pc":"10:45","sla":"2h45min"},{"name":"Sthephany Cavalcante da Silva","ra":"21:58","pc":"10:44","sla":"2h44min"},{"name":"Cineide Maria Farias","ra":"22:40","pc":"10:43","sla":"2h43min"},{"name":"Jayanne","ra":"22:56","pc":"10:43","sla":"2h43min"},{"name":"Bruna Diacira","ra":"23:10","pc":"10:42","sla":"2h42min"},{"name":"Weliton Ribeiro","ra":"00:01","pc":"10:34","sla":"2h34min"},{"name":"Raphael Passarella neto","ra":"02:21","pc":"10:20","sla":"2h20min"}]}}}
 };
 
-const ORDER = ['29157433','31947044','29933656'];
+const ORDER = ['29157433','31947044','29933656','1201941990','35667650','1201941994','35852628'];
 
 function colorPct(v){ return v>=75?'green':v>=50?'amber':'red'; }
 function colorMed(v){ return v<20?'green':v<=30?'amber':'red'; }
@@ -824,7 +880,7 @@ function showTab(id,btn){
   btn.classList.add('active');
 }
 
-renderDay('2026-08-31');
+renderDay('2026-09-01');
 </script>
 </body>
 </html>
